@@ -1,0 +1,122 @@
+{
+  "exportDate": "2026-03-16T10:30:00Z",
+  "appVersion": "1.0.0",
+  "homes": [
+    {
+      "homeId": "57B698A8-83F9-5720-9FF3-3F87580182AC",
+      "homeName": "Manor Farm",
+      "rooms": [
+        {
+          "roomId": "AAA-111",
+          "roomName": "Kitchen",
+          "accessoryCount": 3
+        },
+        {
+          "roomId": "BBB-222",
+          "roomName": "Boot Room",
+          "accessoryCount": 2
+        },
+        {
+          "roomId": "CCC-333",
+          "roomName": "Corridor",
+          "accessoryCount": 1
+        }
+      ],
+      "accessories": [
+        {
+          "accessoryId": "DDD-444",
+          "name": "Hue color lamp 1",
+          "roomName": "Kitchen",
+          "roomId": "AAA-111",
+          "category": "HMAccessoryCategoryTypeLightbulb",
+          "manufacturer": "Signify Netherlands B.V.",
+          "model": "LCT015",
+          "firmwareVersion": "1.104.2",
+          "isReachable": true,
+          "isBridged": true,
+          "services": [
+            {
+              "serviceId": "EEE-555",
+              "name": "Hue color lamp 1",
+              "serviceType": "00000043-0000-1000-8000-0026BB765291",
+              "isPrimary": true,
+              "characteristics": [
+                {
+                  "characteristicId": "FFF-666",
+                  "description": "Power State",
+                  "characteristicType": "00000025-0000-1000-8000-0026BB765291",
+                  "value": "1",
+                  "isReadable": true,
+                  "isWritable": true
+                },
+                {
+                  "characteristicId": "GGG-777",
+                  "description": "Brightness",
+                  "characteristicType": "00000008-0000-1000-8000-0026BB765291",
+                  "value": "100",
+                  "isReadable": true,
+                  "isWritable": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "accessoryId": "HHH-888",
+          "name": "Eve Motion 1234",
+          "roomName": "Boot Room",
+          "roomId": "BBB-222",
+          "category": "HMAccessoryCategoryTypeSensor",
+          "manufacturer": "Eve Systems",
+          "model": "Eve Motion",
+          "firmwareVersion": "2.1.0",
+          "isReachable": true,
+          "isBridged": false,
+          "services": [
+            {
+              "serviceId": "III-999",
+              "name": "Motion Sensor",
+              "serviceType": "00000085-0000-1000-8000-0026BB765291",
+              "isPrimary": true,
+              "characteristics": [
+                {
+                  "characteristicId": "JJJ-000",
+                  "description": "Motion Detected",
+                  "characteristicType": "00000022-0000-1000-8000-0026BB765291",
+                  "value": "0",
+                  "isReadable": true,
+                  "isWritable": false
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "scenes": [
+        {
+          "sceneId": "SCN-001",
+          "sceneName": "Bright",
+          "actionCount": 5,
+          "isExecuting": false
+        },
+        {
+          "sceneId": "SCN-002",
+          "sceneName": "Organic",
+          "actionCount": 3,
+          "isExecuting": false
+        }
+      ],
+      "zones": [
+        {
+          "zoneId": "ZON-001",
+          "zoneName": "Downstairs",
+          "roomIds": [
+            "AAA-111",
+            "BBB-222",
+            "CCC-333"
+          ]
+        }
+      ]
+    }
+  ]
+}

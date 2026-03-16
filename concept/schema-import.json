@@ -1,0 +1,58 @@
+{
+  "homeId": "57B698A8-83F9-5720-9FF3-3F87580182AC",
+  "renames": [
+    {
+      "accessoryId": "DDD-444",
+      "currentName": "Hue color lamp 1",
+      "newName": "Kitchen Pendant"
+    },
+    {
+      "accessoryId": "HHH-888",
+      "currentName": "Eve Motion 1234",
+      "newName": "Boot Room Motion"
+    }
+  ],
+  "roomAssignments": [],
+  "newRooms": [
+    {
+      "roomName": "Playroom",
+      "zone": "Upstairs"
+    }
+  ],
+  "newScenes": [
+    {
+      "sceneName": "Kids Wake Up",
+      "actions": [
+        {
+          "accessoryId": "DDD-444",
+          "serviceType": "00000043-0000-1000-8000-0026BB765291",
+          "characteristicType": "00000025-0000-1000-8000-0026BB765291",
+          "targetValue": true
+        },
+        {
+          "accessoryId": "DDD-444",
+          "serviceType": "00000043-0000-1000-8000-0026BB765291",
+          "characteristicType": "00000008-0000-1000-8000-0026BB765291",
+          "targetValue": 40
+        }
+      ]
+    },
+    {
+      "sceneName": "Kids Bedtime",
+      "actions": [
+        {
+          "accessoryId": "DDD-444",
+          "serviceType": "00000043-0000-1000-8000-0026BB765291",
+          "characteristicType": "00000025-0000-1000-8000-0026BB765291",
+          "targetValue": true
+        },
+        {
+          "accessoryId": "DDD-444",
+          "serviceType": "00000043-0000-1000-8000-0026BB765291",
+          "characteristicType": "00000008-0000-1000-8000-0026BB765291",
+          "targetValue": 10
+        }
+      ]
+    }
+  ]
+}
