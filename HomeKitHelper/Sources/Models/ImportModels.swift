@@ -9,6 +9,26 @@ struct HomeImport: Codable {
     let roomAssignments: [RoomAssignment]
     let newScenes: [NewScene]
     let newRooms: [NewRoom]
+    let deleteRooms: [DeleteRoom]
+    let deleteScenes: [DeleteScene]
+    let newZones: [NewZone]
+    let deleteZones: [DeleteZone]
+    let updateScenes: [UpdateScene]
+
+    // All arrays default to empty for backwards compatibility
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        homeId = try container.decode(String.self, forKey: .homeId)
+        renames = try container.decodeIfPresent([RenameAction].self, forKey: .renames) ?? []
+        roomAssignments = try container.decodeIfPresent([RoomAssignment].self, forKey: .roomAssignments) ?? []
+        newScenes = try container.decodeIfPresent([NewScene].self, forKey: .newScenes) ?? []
+        newRooms = try container.decodeIfPresent([NewRoom].self, forKey: .newRooms) ?? []
+        deleteRooms = try container.decodeIfPresent([DeleteRoom].self, forKey: .deleteRooms) ?? []
+        deleteScenes = try container.decodeIfPresent([DeleteScene].self, forKey: .deleteScenes) ?? []
+        newZones = try container.decodeIfPresent([NewZone].self, forKey: .newZones) ?? []
+        deleteZones = try container.decodeIfPresent([DeleteZone].self, forKey: .deleteZones) ?? []
+        updateScenes = try container.decodeIfPresent([UpdateScene].self, forKey: .updateScenes) ?? []
+    }
 }
 
 struct RenameAction: Codable {
@@ -38,6 +58,39 @@ struct SceneAction: Codable {
 struct NewRoom: Codable {
     let roomName: String
     let zone: String?
+}
+
+struct DeleteRoom: Codable {
+    let roomId: String
+}
+
+struct DeleteScene: Codable {
+    let sceneId: String
+}
+
+struct NewZone: Codable {
+    let zoneName: String
+}
+
+struct DeleteZone: Codable {
+    let zoneId: String
+}
+
+struct UpdateScene: Codable {
+    let sceneId: String
+    let newSceneName: String?
+    let actions: [SceneAction]
+}
+
+// MARK: - Import Result Summary
+
+struct ImportResultSummary {
+    let succeeded: Int
+    let failed: Int
+    let skipped: Int
+
+    var total: Int { succeeded + failed + skipped }
+    var isEmpty: Bool { total == 0 }
 }
 
 // MARK: - Type-erased Codable wrapper

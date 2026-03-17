@@ -2,15 +2,13 @@
 	import { homeStore } from '$lib/stores/home.svelte';
 	import FloorSlab from './FloorSlab.svelte';
 
-	const defaultFloors = [
-		{ name: 'Ground Floor', color: '#89F7FE', roomCount: 7 },
-		{ name: 'First Floor', color: '#d4a053', roomCount: 0 },
-		{ name: 'Garden', color: '#00E676', roomCount: 0 },
-	];
-
 	const zoneColors = ['#FFB347', '#89F7FE', '#00E676', '#FF6FD8'];
 
 	let selectedIndex = $state(0);
+	let showNewRoom = $state(false);
+	let showNewZone = $state(false);
+	let newRoomName = $state('');
+	let newZoneName = $state('');
 
 	let floors = $derived(
 		homeStore.zones.length > 0
@@ -18,22 +16,92 @@
 					name: z.zoneName,
 					color: zoneColors[i % zoneColors.length],
 					roomCount: z.roomIds.length,
+					zoneId: z.zoneId,
 				}))
-			: defaultFloors
+			: []
 	);
+
+	function addRoom() {
+		const name = newRoomName.trim();
+		if (!name) return;
+		homeStore.createRoom(name);
+		newRoomName = '';
+		showNewRoom = false;
+	}
+
+	function addZone() {
+		const name = newZoneName.trim();
+		if (!name) return;
+		homeStore.createZone(name);
+		newZoneName = '';
+		showNewZone = false;
+	}
 </script>
 
 <nav class="building-nav">
-	<h2 class="heading">FLOORS</h2>
+	<h2 class="heading">ZONES</h2>
 	{#each floors as floor, i}
-		<FloorSlab
-			name={floor.name}
-			selected={selectedIndex === i}
-			color={floor.color}
-			roomCount={floor.roomCount}
-			onclick={() => (selectedIndex = i)}
-		/>
+		<div class="zone-row">
+			<button class="zone-slab-wrap" onclick={() => (selectedIndex = i)}>
+				<FloorSlab
+					name={floor.name}
+					selected={selectedIndex === i}
+					color={floor.color}
+					roomCount={floor.roomCount}
+				/>
+			</button>
+			<button
+				class="zone-delete"
+				title="Delete zone"
+				onclick={() => homeStore.deleteZone(floor.zoneId)}
+			>&times;</button>
+		</div>
 	{/each}
+
+	{#if floors.length === 0}
+		<p class="empty-hint">No zones yet</p>
+	{/if}
+
+	<!-- Add Zone -->
+	{#if showNewZone}
+		<div class="inline-form">
+			<!-- svelte-ignore a11y_autofocus -- focus follows explicit user click on "+ Zone" button -->
+			<input
+				type="text"
+				class="inline-input"
+				placeholder="Zone name"
+				bind:value={newZoneName}
+				onkeydown={(e) => { if (e.key === 'Enter') addZone(); if (e.key === 'Escape') showNewZone = false; }}
+				autofocus
+			/>
+			<button class="inline-ok" onclick={addZone}>+</button>
+		</div>
+	{:else}
+		<button class="add-btn" onclick={() => (showNewZone = true)}>+ Zone</button>
+	{/if}
+
+	<div class="divider"></div>
+
+	<h2 class="heading">ROOMS</h2>
+	<p class="room-count">{homeStore.roomCount} rooms</p>
+
+	<!-- Add Room -->
+	{#if showNewRoom}
+		<div class="inline-form">
+			<!-- svelte-ignore a11y_autofocus -- focus follows explicit user click on "+ Room" button -->
+			<input
+				type="text"
+				class="inline-input"
+				placeholder="Room name"
+				bind:value={newRoomName}
+				onkeydown={(e) => { if (e.key === 'Enter') addRoom(); if (e.key === 'Escape') showNewRoom = false; }}
+				autofocus
+			/>
+			<button class="inline-ok" onclick={addRoom}>+</button>
+		</div>
+	{:else}
+		<button class="add-btn" onclick={() => (showNewRoom = true)}>+ Room</button>
+	{/if}
 </nav>
 
 <style>
@@ -48,6 +116,7 @@
 		border: 1px solid var(--card-border);
 		backdrop-filter: blur(20px);
 		-webkit-backdrop-filter: blur(20px);
+		min-width: 140px;
 	}
 
 	.heading {
@@ -56,7 +125,127 @@
 		text-transform: uppercase;
 		color: var(--text-tertiary);
 		letter-spacing: 0.12em;
-		margin: 0 0 12px 0;
+		margin: 0 0 8px 0;
 		font-weight: 400;
+	}
+
+	.zone-row {
+		display: flex;
+		align-items: center;
+		gap: 4px;
+	}
+
+	.zone-slab-wrap {
+		flex: 1;
+		cursor: pointer;
+		background: none;
+		border: none;
+		padding: 0;
+		text-align: left;
+	}
+
+	.zone-delete {
+		width: 20px;
+		height: 20px;
+		border-radius: 50%;
+		border: 1px solid transparent;
+		background: none;
+		color: var(--text-muted);
+		font-size: 14px;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		opacity: 0;
+		transition: all 0.2s;
+		flex-shrink: 0;
+	}
+
+	.zone-row:hover .zone-delete {
+		opacity: 1;
+	}
+
+	.zone-delete:hover {
+		color: var(--siri-red);
+		border-color: var(--siri-red);
+	}
+
+	.empty-hint {
+		font-family: 'JetBrains Mono', monospace;
+		font-size: 9px;
+		color: var(--text-muted);
+		margin: 4px 0;
+	}
+
+	.divider {
+		height: 1px;
+		background: var(--card-border);
+		margin: 12px 0;
+	}
+
+	.room-count {
+		font-family: 'JetBrains Mono', monospace;
+		font-size: 10px;
+		color: var(--text-tertiary);
+		margin: 0 0 8px 0;
+	}
+
+	.add-btn {
+		font-family: 'JetBrains Mono', monospace;
+		font-size: 10px;
+		color: var(--text-tertiary);
+		background: none;
+		border: 1px dashed var(--card-border);
+		border-radius: 8px;
+		padding: 6px 12px;
+		cursor: pointer;
+		width: 100%;
+		text-align: center;
+		transition: all 0.2s;
+		margin-top: 4px;
+	}
+
+	.add-btn:hover {
+		color: var(--solar-amber);
+		border-color: var(--solar-amber);
+	}
+
+	.inline-form {
+		display: flex;
+		gap: 4px;
+		margin-top: 4px;
+	}
+
+	.inline-input {
+		flex: 1;
+		font-family: 'DM Sans', sans-serif;
+		font-size: 11px;
+		padding: 5px 8px;
+		border-radius: 8px;
+		border: 1px solid var(--solar-amber);
+		background: var(--card-bg);
+		color: var(--text-primary);
+		outline: none;
+		min-width: 0;
+	}
+
+	.inline-ok {
+		width: 28px;
+		height: 28px;
+		border-radius: 8px;
+		border: 1px solid var(--solar-amber);
+		background: color-mix(in srgb, var(--solar-amber), transparent 90%);
+		color: var(--solar-amber);
+		font-size: 14px;
+		font-weight: 700;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+	}
+
+	.inline-ok:hover {
+		background: color-mix(in srgb, var(--solar-amber), transparent 80%);
 	}
 </style>

@@ -12,29 +12,42 @@
 	import TimeScrubber from '$lib/components/TimeScrubber.svelte';
 	import PathLegend from '$lib/components/PathLegend.svelte';
 	import SaveAutomationModal from '$lib/components/SaveAutomationModal.svelte';
+	import WelcomeScreen from '$lib/components/WelcomeScreen.svelte';
+	import ChangesPanel from '$lib/components/ChangesPanel.svelte';
+	import BulkRenamePanel from '$lib/components/BulkRenamePanel.svelte';
+	import ScenePanel from '$lib/components/ScenePanel.svelte';
 	import { pathStore } from '$lib/stores/paths.svelte';
+	import { homeStore } from '$lib/stores/home.svelte';
 </script>
 
 <svelte:head>
 	<title>HomeKit Helper — Dream Canvas</title>
 </svelte:head>
 
-<Canvas />
-<TopBar />
-<BuildingNav />
-<DevicePanel />
-<RoomEditPanel />
-<IntentDrawer />
-<BottomBar />
-<ImportModal />
+{#if homeStore.isLoaded}
+	<Canvas />
+	<TopBar />
+	<BuildingNav />
+	<DevicePanel />
+	<RoomEditPanel />
+	<IntentDrawer />
+	<BottomBar />
+	<ChangesPanel />
+	<BulkRenamePanel />
+	<ScenePanel />
 
-{#if pathStore.pathModeActive}
-	<UserSelector />
-	<TimeScrubber />
-	{#if pathStore.currentPath}
-		<PathLegend />
+	{#if pathStore.pathModeActive}
+		<UserSelector />
+		<TimeScrubber />
+		{#if pathStore.currentPath}
+			<PathLegend />
+		{/if}
 	{/if}
+
+	<SaveAutomationModal />
+	<RoomDesigner />
+{:else}
+	<WelcomeScreen />
 {/if}
 
-<SaveAutomationModal />
-<RoomDesigner />
+<ImportModal />

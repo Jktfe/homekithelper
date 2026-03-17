@@ -1,4 +1,5 @@
 import SwiftUI
+import UniformTypeIdentifiers
 #if canImport(UIKit)
 import UIKit
 #elseif canImport(AppKit)
@@ -10,6 +11,12 @@ struct ExportTab: View {
     @Binding var exportedJSON: String
     @Binding var showCopiedToast: Bool
 
+    @State private var isExporting = false
+    @State private var showFileExporter = false
+    @State private var showSavedToast = false
+    @State private var saveError: String?
+    @State private var jsonDocument = JSONDocument()
+
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
@@ -18,14 +25,21 @@ struct ExportTab: View {
                 }
 
                 Button {
-                    export()
+                    exportConfig()
                 } label: {
-                    Label("Export Configuration", systemImage: "square.and.arrow.up")
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 12)
+                    if isExporting {
+                        ProgressView()
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 12)
+                    } else {
+                        Label("Export Configuration", systemImage: "square.and.arrow.up")
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 12)
+                    }
                 }
                 .buttonStyle(.borderedProminent)
                 .tint(.blue)
+                .disabled(isExporting)
 
                 if !exportedJSON.isEmpty {
                     VStack(alignment: .leading, spacing: 12) {
@@ -39,7 +53,8 @@ struct ExportTab: View {
                             .buttonStyle(.bordered)
 
                             Button("Save to File", systemImage: "folder") {
-                                saveToFile(exportedJSON)
+                                jsonDocument = JSONDocument(exportedJSON)
+                                showFileExporter = true
                             }
                             .buttonStyle(.bordered)
                         }
@@ -56,10 +71,51 @@ struct ExportTab: View {
             }
             .padding()
         }
+        .fileExporter(
+            isPresented: $showFileExporter,
+            document: jsonDocument,
+            contentType: .json,
+            defaultFilename: "homekit_export.json"
+        ) { result in
+            switch result {
+            case .success:
+                withAnimation { showSavedToast = true }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    withAnimation { showSavedToast = false }
+                }
+            case .failure(let error):
+                saveError = error.localizedDescription
+            }
+        }
+        .alert("Save Failed", isPresented: .init(
+            get: { saveError != nil },
+            set: { if !$0 { saveError = nil } }
+        )) {
+            Button("OK") { saveError = nil }
+        } message: {
+            Text(saveError ?? "Unknown error")
+        }
+        .overlay(alignment: .top) {
+            if showSavedToast {
+                Text("Saved to file")
+                    .font(.subheadline.weight(.medium))
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 10)
+                    .background(.thinMaterial, in: Capsule())
+                    .padding(.top, 8)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+            }
+        }
     }
 
-    private func export() {
-        exportedJSON = bridge.exportJSON() ?? "Export failed"
+    private func exportConfig() {
+        isExporting = true
+        Task {
+            // Run on background to avoid blocking UI for large homes
+            let json = await Task.detached { bridge.exportJSON() ?? "Export failed" }.value
+            exportedJSON = json
+            isExporting = false
+        }
     }
 
     private func copyToClipboard(_ text: String) {
@@ -74,11 +130,6 @@ struct ExportTab: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             withAnimation { showCopiedToast = false }
         }
-    }
-
-    private func saveToFile(_ text: String) {
-        let desktopPath = NSHomeDirectory() + "/Desktop/homekit_export.json"
-        try? text.write(toFile: desktopPath, atomically: true, encoding: .utf8)
     }
 }
 

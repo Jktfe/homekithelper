@@ -1,11 +1,13 @@
 <script lang="ts">
 	import { homeStore } from '$lib/stores/home.svelte';
-	import { siriScore, siriClass, siriLabel } from '$lib/utils/siri-score';
+	import { siriScore, siriClass, siriLabel, siriColor } from '$lib/utils/siri-score';
 	import { CHAR_TYPES } from '$lib/types/homekit';
 	import type { AccessoryData, CharacteristicData } from '$lib/types/homekit';
 
 	// Local control state keyed by characteristicId
 	let controlState = $state<Record<string, number | boolean>>({});
+	let editingId = $state<string | null>(null);
+	let editName = $state('');
 
 	let room = $derived(homeStore.selectedRoom);
 	let devices = $derived(homeStore.selectedRoomAccessories);
@@ -43,6 +45,18 @@
 	function matchesType(char: CharacteristicData, typePrefix: string): boolean {
 		return char.characteristicType.startsWith(typePrefix);
 	}
+
+	function startEdit(device: AccessoryData) {
+		editingId = device.accessoryId;
+		editName = device.name;
+	}
+
+	function commitEdit() {
+		if (editingId && editName.trim()) {
+			homeStore.renameAccessory(editingId, editName.trim());
+		}
+		editingId = null;
+	}
 </script>
 
 <div class="device-panel" class:open={homeStore.panelOpen}>
@@ -62,8 +76,22 @@
 				{@const score = siriScore(device.name)}
 				<div class="device-card">
 					<div class="card-top">
-						<span class="device-name">{device.name}</span>
-						<span class="siri-badge {siriClass(score)}">{siriLabel(score)}</span>
+						{#if editingId === device.accessoryId}
+							<!-- svelte-ignore a11y_autofocus -- focus follows explicit user click on device name -->
+							<input
+								class="name-input"
+								type="text"
+								bind:value={editName}
+								onblur={commitEdit}
+								onkeydown={(e) => { if (e.key === 'Enter') commitEdit(); if (e.key === 'Escape') { editingId = null; } }}
+								autofocus
+							/>
+						{:else}
+							<button class="device-name-btn" onclick={() => startEdit(device)}>
+								{device.name}
+							</button>
+						{/if}
+						<span class="siri-badge {siriClass(score)}" style="color: {siriColor(score)}">{siriLabel(score)}</span>
 					</div>
 
 					{#each device.services as service}
@@ -74,6 +102,19 @@
 
 					<div class="manufacturer">
 						{device.manufacturer}{device.model ? ` · ${device.model}` : ''}
+					</div>
+
+					<div class="move-row">
+						<span class="move-label">Room</span>
+						<select
+							class="room-select"
+							value={device.roomId}
+							onchange={(e) => homeStore.moveAccessoryToRoom(device.accessoryId, e.currentTarget.value)}
+						>
+							{#each homeStore.rooms as r}
+								<option value={r.roomId}>{r.roomName}</option>
+							{/each}
+						</select>
 					</div>
 
 					<div class="controls">
@@ -263,10 +304,35 @@
 		gap: 8px;
 	}
 
-	.device-name {
+	.device-name-btn {
 		font-size: 13px;
 		font-weight: 500;
 		color: var(--text-primary);
+		background: none;
+		border: none;
+		padding: 0;
+		cursor: pointer;
+		text-align: left;
+		font-family: inherit;
+		transition: color 0.2s;
+	}
+
+	.device-name-btn:hover {
+		color: var(--solar-amber);
+	}
+
+	.name-input {
+		font-size: 13px;
+		font-weight: 500;
+		color: var(--text-primary);
+		background: var(--card-bg);
+		border: 1px solid var(--solar-amber);
+		border-radius: 6px;
+		padding: 2px 6px;
+		outline: none;
+		font-family: inherit;
+		flex: 1;
+		min-width: 0;
 	}
 
 	.siri-badge {
@@ -431,5 +497,45 @@
 	.status-indicator.active {
 		background: #00E676;
 		box-shadow: 0 0 6px rgba(0, 230, 118, 0.4);
+	}
+
+	.move-row {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		margin-top: 8px;
+		padding-top: 8px;
+		border-top: 1px solid var(--card-border);
+	}
+
+	.move-label {
+		font-family: 'JetBrains Mono', monospace;
+		font-size: 9px;
+		color: var(--text-tertiary);
+		text-transform: uppercase;
+		min-width: 36px;
+	}
+
+	.room-select {
+		flex: 1;
+		font-family: 'DM Sans', sans-serif;
+		font-size: 11px;
+		padding: 5px 8px;
+		border-radius: 8px;
+		border: 1px solid var(--card-border);
+		background: var(--card-bg);
+		color: var(--text-primary);
+		cursor: pointer;
+		outline: none;
+		appearance: none;
+		-webkit-appearance: none;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%23888'/%3E%3C/svg%3E");
+		background-repeat: no-repeat;
+		background-position: right 8px center;
+		padding-right: 22px;
+	}
+
+	.room-select:focus {
+		border-color: var(--solar-amber);
 	}
 </style>

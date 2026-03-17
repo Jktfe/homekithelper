@@ -75,8 +75,8 @@
 		}
 
 		if (hasDragged) {
-			const newX = Math.min(1040, Math.max(60, dragState.origX + dx));
-			const newY = Math.min(590, Math.max(60, dragState.origY + dy));
+			const newX = Math.min(1440, Math.max(60, dragState.origX + dx));
+			const newY = Math.min(940, Math.max(60, dragState.origY + dy));
 			homeStore.updateRoomPosition(dragState.roomId, newX, newY);
 		}
 	}
@@ -116,7 +116,7 @@
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <svg
 	bind:this={svgEl}
-	viewBox="0 0 1100 650"
+	viewBox="0 0 1500 1000"
 	width="100%"
 	height="100%"
 	style="display:block; background:transparent;"
@@ -227,8 +227,8 @@
 
 	<!-- Singularity flash -->
 	<circle
-		cx={550}
-		cy={325}
+		cx={750}
+		cy={500}
 		r={3}
 		fill="white"
 		opacity="0"

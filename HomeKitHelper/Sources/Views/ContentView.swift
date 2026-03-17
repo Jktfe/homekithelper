@@ -44,6 +44,16 @@ struct ContentView: View {
                 }
             }
             .navigationTitle("HomeKit Helper")
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        bridge.refresh()
+                    } label: {
+                        Image(systemName: "arrow.clockwise")
+                    }
+                    .disabled(bridge.isLoading)
+                }
+            }
             .overlay(alignment: .top) {
                 if showCopiedToast {
                     CopiedToast()

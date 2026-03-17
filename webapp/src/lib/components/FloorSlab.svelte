@@ -1,10 +1,10 @@
 <script lang="ts">
-	let { name, selected, color, roomCount, onclick } = $props<{
+	let { name, selected, color, roomCount, onclick = () => {} } = $props<{
 		name: string;
 		selected: boolean;
 		color: string;
 		roomCount: number;
-		onclick: () => void;
+		onclick?: () => void;
 	}>();
 </script>
 

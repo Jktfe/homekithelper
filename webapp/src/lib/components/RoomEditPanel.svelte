@@ -123,6 +123,15 @@
 				<span class="design-icon">⬡</span>
 				Design Room Layout
 			</button>
+
+			<!-- Delete Room -->
+			{#if accs.length === 0}
+				<button class="delete-btn" onclick={() => { if (homeStore.editingRoomId) homeStore.deleteRoom(homeStore.editingRoomId); }}>
+					Delete Empty Room
+				</button>
+			{:else}
+				<p class="delete-hint">Remove all {accs.length} device{accs.length !== 1 ? 's' : ''} to delete this room</p>
+			{/if}
 		</div>
 	{/if}
 </div>
@@ -350,5 +359,31 @@
 
 	.design-icon {
 		font-size: 16px;
+	}
+
+	.delete-btn {
+		padding: 12px;
+		border-radius: 12px;
+		border: 1px solid var(--siri-red);
+		background: color-mix(in srgb, var(--siri-red), transparent 92%);
+		color: var(--siri-red);
+		font-family: 'DM Sans', sans-serif;
+		font-size: 12px;
+		font-weight: 500;
+		cursor: pointer;
+		transition: all 0.2s;
+		text-align: center;
+	}
+
+	.delete-btn:hover {
+		background: color-mix(in srgb, var(--siri-red), transparent 85%);
+	}
+
+	.delete-hint {
+		font-family: 'JetBrains Mono', monospace;
+		font-size: 10px;
+		color: var(--text-muted);
+		text-align: center;
+		margin: 0;
 	}
 </style>

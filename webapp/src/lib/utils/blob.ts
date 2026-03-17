@@ -38,7 +38,7 @@ export function blobPath(cx: number, cy: number, baseR: number, seed: number): s
 	return d;
 }
 
-/** Calculate room blob radius based on accessory count */
+/** Calculate room blob radius based on accessory count (sqrt-scaled) */
 export function roomRadius(accessoryCount: number): number {
-	return 55 + accessoryCount * 10;
+	return 45 + Math.sqrt(accessoryCount) * 20;
 }

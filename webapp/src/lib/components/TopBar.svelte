@@ -2,6 +2,7 @@
 	import { homeStore } from '$lib/stores/home.svelte';
 	import { pathStore } from '$lib/stores/paths.svelte';
 	import { themeStore } from '$lib/stores/theme.svelte';
+	import { changeStore } from '$lib/stores/changes.svelte';
 
 	const buildings = ['Building 1', 'Building 2', 'Outdoors'];
 	let selectedBuilding = $state(0);
@@ -45,6 +46,22 @@
 	<div class="right">
 		<button class="glass-btn" onclick={() => (homeStore.showImportModal = true)}>
 			Import
+		</button>
+		<button class="glass-btn" onclick={() => (homeStore.showBulkRename = true)}>
+			Rename
+		</button>
+		<button class="glass-btn" onclick={() => (homeStore.showScenePanel = true)}>
+			Scenes
+		</button>
+		<button
+			class="glass-btn changes-btn"
+			class:has-changes={!changeStore.isEmpty}
+			onclick={() => (changeStore.showPanel = !changeStore.showPanel)}
+		>
+			Changes
+			{#if !changeStore.isEmpty}
+				<span class="badge">{changeStore.pendingCount}</span>
+			{/if}
 		</button>
 		<button
 			class="glass-btn"
@@ -126,6 +143,9 @@
 		color: var(--text-tertiary);
 		cursor: pointer;
 		transition: all 0.25s ease;
+		display: flex;
+		align-items: center;
+		gap: 6px;
 	}
 
 	.glass-btn:hover {
@@ -137,6 +157,26 @@
 		border-color: color-mix(in srgb, var(--solar-amber), transparent 60%);
 		background: color-mix(in srgb, var(--solar-amber), transparent 90%);
 		color: var(--solar-amber);
+	}
+
+	.changes-btn.has-changes {
+		border-color: color-mix(in srgb, var(--solar-amber), transparent 50%);
+		color: var(--solar-amber);
+	}
+
+	.badge {
+		font-family: 'JetBrains Mono', monospace;
+		font-size: 9px;
+		font-weight: 700;
+		background: var(--solar-amber);
+		color: #0F1115;
+		min-width: 18px;
+		height: 18px;
+		border-radius: 9px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0 5px;
 	}
 
 	.theme-btn {
