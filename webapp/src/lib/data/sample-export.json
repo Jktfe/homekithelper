@@ -1,0 +1,215 @@
+{
+  "exportDate": "2026-03-16T21:00:00Z",
+  "appVersion": "0.1.0",
+  "homes": [{
+    "homeId": "57B698A8-83F9-5720-9FF3-3F87580182AC",
+    "homeName": "Manor Farm",
+    "rooms": [
+      { "roomId": "R-001", "roomName": "Living Room", "accessoryCount": 4 },
+      { "roomId": "R-002", "roomName": "Kitchen", "accessoryCount": 3 },
+      { "roomId": "R-003", "roomName": "Master Bedroom", "accessoryCount": 3 },
+      { "roomId": "R-004", "roomName": "Office", "accessoryCount": 3 },
+      { "roomId": "R-005", "roomName": "Fletcher's Room", "accessoryCount": 2 },
+      { "roomId": "R-006", "roomName": "Vi'la's Room", "accessoryCount": 2 },
+      { "roomId": "R-007", "roomName": "Garden", "accessoryCount": 2 }
+    ],
+    "accessories": [
+      {
+        "accessoryId": "A-001", "name": "Hue color lamp 1", "roomId": "R-001", "roomName": "Living Room",
+        "category": "HMAccessoryCategoryTypeLightbulb", "manufacturer": "Signify", "model": "LCT015",
+        "firmwareVersion": "1.104.2", "isReachable": true, "isBridged": true,
+        "services": [{"serviceId": "S-001", "name": "Light", "serviceType": "00000043-0000-1000-8000-0026BB765291", "isPrimary": true,
+          "characteristics": [
+            {"characteristicId": "C-001", "description": "Power State", "characteristicType": "00000025-0000-1000-8000-0026BB765291", "value": "1", "isReadable": true, "isWritable": true},
+            {"characteristicId": "C-002", "description": "Brightness", "characteristicType": "00000008-0000-1000-8000-0026BB765291", "value": "80", "isReadable": true, "isWritable": true}
+          ]}]
+      },
+      {
+        "accessoryId": "A-002", "name": "Living Room Lamp", "roomId": "R-001", "roomName": "Living Room",
+        "category": "HMAccessoryCategoryTypeLightbulb", "manufacturer": "IKEA", "model": "TRADFRI",
+        "firmwareVersion": "2.3.0", "isReachable": true, "isBridged": true,
+        "services": [{"serviceId": "S-002", "name": "Light", "serviceType": "00000043-0000-1000-8000-0026BB765291", "isPrimary": true,
+          "characteristics": [
+            {"characteristicId": "C-003", "description": "Power State", "characteristicType": "00000025-0000-1000-8000-0026BB765291", "value": "1", "isReadable": true, "isWritable": true},
+            {"characteristicId": "C-004", "description": "Brightness", "characteristicType": "00000008-0000-1000-8000-0026BB765291", "value": "60", "isReadable": true, "isWritable": true}
+          ]}]
+      },
+      {
+        "accessoryId": "A-003", "name": "Apple TV", "roomId": "R-001", "roomName": "Living Room",
+        "category": "HMAccessoryCategoryTypeAppleTV", "manufacturer": "Apple", "model": "Apple TV 4K",
+        "firmwareVersion": "18.3", "isReachable": true, "isBridged": false,
+        "services": [{"serviceId": "S-003", "name": "Apple TV", "serviceType": "000000D8-0000-1000-8000-0026BB765291", "isPrimary": true,
+          "characteristics": [
+            {"characteristicId": "C-005", "description": "Active", "characteristicType": "000000B0-0000-1000-8000-0026BB765291", "value": "1", "isReadable": true, "isWritable": false}
+          ]}]
+      },
+      {
+        "accessoryId": "A-004", "name": "Eve Motion Lounge", "roomId": "R-001", "roomName": "Living Room",
+        "category": "HMAccessoryCategoryTypeSensor", "manufacturer": "Eve Systems", "model": "Eve Motion",
+        "firmwareVersion": "2.1.0", "isReachable": true, "isBridged": false,
+        "services": [{"serviceId": "S-004", "name": "Motion", "serviceType": "00000085-0000-1000-8000-0026BB765291", "isPrimary": true,
+          "characteristics": [
+            {"characteristicId": "C-006", "description": "Motion Detected", "characteristicType": "00000022-0000-1000-8000-0026BB765291", "value": "1", "isReadable": true, "isWritable": false}
+          ]}]
+      },
+      {
+        "accessoryId": "A-010", "name": "Kitchen Pendant", "roomId": "R-002", "roomName": "Kitchen",
+        "category": "HMAccessoryCategoryTypeLightbulb", "manufacturer": "Signify", "model": "LCT015",
+        "firmwareVersion": "1.104.2", "isReachable": true, "isBridged": true,
+        "services": [{"serviceId": "S-010", "name": "Light", "serviceType": "00000043-0000-1000-8000-0026BB765291", "isPrimary": true,
+          "characteristics": [
+            {"characteristicId": "C-010", "description": "Power State", "characteristicType": "00000025-0000-1000-8000-0026BB765291", "value": "1", "isReadable": true, "isWritable": true},
+            {"characteristicId": "C-011", "description": "Brightness", "characteristicType": "00000008-0000-1000-8000-0026BB765291", "value": "100", "isReadable": true, "isWritable": true}
+          ]}]
+      },
+      {
+        "accessoryId": "A-011", "name": "Kitchen Spots", "roomId": "R-002", "roomName": "Kitchen",
+        "category": "HMAccessoryCategoryTypeLightbulb", "manufacturer": "Signify", "model": "LCG002",
+        "firmwareVersion": "1.93.7", "isReachable": true, "isBridged": true,
+        "services": [{"serviceId": "S-011", "name": "Light", "serviceType": "00000043-0000-1000-8000-0026BB765291", "isPrimary": true,
+          "characteristics": [
+            {"characteristicId": "C-012", "description": "Power State", "characteristicType": "00000025-0000-1000-8000-0026BB765291", "value": "1", "isReadable": true, "isWritable": true},
+            {"characteristicId": "C-013", "description": "Brightness", "characteristicType": "00000008-0000-1000-8000-0026BB765291", "value": "75", "isReadable": true, "isWritable": true}
+          ]}]
+      },
+      {
+        "accessoryId": "A-012", "name": "Eve Thermo Kitchen", "roomId": "R-002", "roomName": "Kitchen",
+        "category": "HMAccessoryCategoryTypeSensor", "manufacturer": "Eve Systems", "model": "Eve Room",
+        "firmwareVersion": "1.5.0", "isReachable": true, "isBridged": false,
+        "services": [{"serviceId": "S-012", "name": "Temperature", "serviceType": "0000008A-0000-1000-8000-0026BB765291", "isPrimary": true,
+          "characteristics": [
+            {"characteristicId": "C-014", "description": "Current Temperature", "characteristicType": "00000011-0000-1000-8000-0026BB765291", "value": "21.5", "isReadable": true, "isWritable": false}
+          ]}]
+      },
+      {
+        "accessoryId": "A-020", "name": "Bedroom Main", "roomId": "R-003", "roomName": "Master Bedroom",
+        "category": "HMAccessoryCategoryTypeLightbulb", "manufacturer": "Signify", "model": "LCT015",
+        "firmwareVersion": "1.104.2", "isReachable": true, "isBridged": true,
+        "services": [{"serviceId": "S-020", "name": "Light", "serviceType": "00000043-0000-1000-8000-0026BB765291", "isPrimary": true,
+          "characteristics": [
+            {"characteristicId": "C-020", "description": "Power State", "characteristicType": "00000025-0000-1000-8000-0026BB765291", "value": "0", "isReadable": true, "isWritable": true},
+            {"characteristicId": "C-021", "description": "Brightness", "characteristicType": "00000008-0000-1000-8000-0026BB765291", "value": "30", "isReadable": true, "isWritable": true}
+          ]}]
+      },
+      {
+        "accessoryId": "A-021", "name": "Bedside Left", "roomId": "R-003", "roomName": "Master Bedroom",
+        "category": "HMAccessoryCategoryTypeLightbulb", "manufacturer": "IKEA", "model": "TRADFRI",
+        "firmwareVersion": "2.3.0", "isReachable": true, "isBridged": true,
+        "services": [{"serviceId": "S-021", "name": "Light", "serviceType": "00000043-0000-1000-8000-0026BB765291", "isPrimary": true,
+          "characteristics": [
+            {"characteristicId": "C-022", "description": "Power State", "characteristicType": "00000025-0000-1000-8000-0026BB765291", "value": "0", "isReadable": true, "isWritable": true},
+            {"characteristicId": "C-023", "description": "Brightness", "characteristicType": "00000008-0000-1000-8000-0026BB765291", "value": "15", "isReadable": true, "isWritable": true}
+          ]}]
+      },
+      {
+        "accessoryId": "A-022", "name": "Bedroom Blind", "roomId": "R-003", "roomName": "Master Bedroom",
+        "category": "HMAccessoryCategoryTypeWindowCovering", "manufacturer": "Eve Systems", "model": "Eve MotionBlinds",
+        "firmwareVersion": "1.2.0", "isReachable": true, "isBridged": false,
+        "services": [{"serviceId": "S-022", "name": "Blind", "serviceType": "0000008C-0000-1000-8000-0026BB765291", "isPrimary": true,
+          "characteristics": [
+            {"characteristicId": "C-024", "description": "Target Position", "characteristicType": "0000007C-0000-1000-8000-0026BB765291", "value": "100", "isReadable": true, "isWritable": true}
+          ]}]
+      },
+      {
+        "accessoryId": "A-030", "name": "Office Plug", "roomId": "R-004", "roomName": "Office",
+        "category": "HMAccessoryCategoryTypeOutlet", "manufacturer": "Tuya", "model": "Socket-SWA1",
+        "firmwareVersion": "3.3", "isReachable": true, "isBridged": false,
+        "services": [{"serviceId": "S-030", "name": "Outlet", "serviceType": "00000047-0000-1000-8000-0026BB765291", "isPrimary": true,
+          "characteristics": [
+            {"characteristicId": "C-030", "description": "Power State", "characteristicType": "00000025-0000-1000-8000-0026BB765291", "value": "1", "isReadable": true, "isWritable": true}
+          ]}]
+      },
+      {
+        "accessoryId": "A-031", "name": "Office Rad", "roomId": "R-004", "roomName": "Office",
+        "category": "HMAccessoryCategoryTypeAirHeater", "manufacturer": "Tuya", "model": "OH-XA SERIES",
+        "firmwareVersion": "2.2", "isReachable": true, "isBridged": false,
+        "services": [{"serviceId": "S-031", "name": "Heater", "serviceType": "000000BC-0000-1000-8000-0026BB765291", "isPrimary": true,
+          "characteristics": [
+            {"characteristicId": "C-031", "description": "Active", "characteristicType": "000000B0-0000-1000-8000-0026BB765291", "value": "1", "isReadable": true, "isWritable": true},
+            {"characteristicId": "C-032", "description": "Target Temperature", "characteristicType": "00000035-0000-1000-8000-0026BB765291", "value": "21", "isReadable": true, "isWritable": true}
+          ]}]
+      },
+      {
+        "accessoryId": "A-032", "name": "Ring Office Cam", "roomId": "R-004", "roomName": "Office",
+        "category": "HMAccessoryCategoryTypeIPCamera", "manufacturer": "Ring", "model": "Indoor Cam",
+        "firmwareVersion": "5.8", "isReachable": true, "isBridged": false,
+        "services": [{"serviceId": "S-032", "name": "Camera", "serviceType": "00000110-0000-1000-8000-0026BB765291", "isPrimary": true,
+          "characteristics": [
+            {"characteristicId": "C-033", "description": "Active", "characteristicType": "000000B0-0000-1000-8000-0026BB765291", "value": "1", "isReadable": true, "isWritable": false}
+          ]}]
+      },
+      {
+        "accessoryId": "A-040", "name": "Fletcher Light", "roomId": "R-005", "roomName": "Fletcher's Room",
+        "category": "HMAccessoryCategoryTypeLightbulb", "manufacturer": "IKEA", "model": "TRADFRI",
+        "firmwareVersion": "2.3.0", "isReachable": true, "isBridged": true,
+        "services": [{"serviceId": "S-040", "name": "Light", "serviceType": "00000043-0000-1000-8000-0026BB765291", "isPrimary": true,
+          "characteristics": [
+            {"characteristicId": "C-040", "description": "Power State", "characteristicType": "00000025-0000-1000-8000-0026BB765291", "value": "0", "isReadable": true, "isWritable": true},
+            {"characteristicId": "C-041", "description": "Brightness", "characteristicType": "00000008-0000-1000-8000-0026BB765291", "value": "50", "isReadable": true, "isWritable": true}
+          ]}]
+      },
+      {
+        "accessoryId": "A-041", "name": "Fletcher Night Light", "roomId": "R-005", "roomName": "Fletcher's Room",
+        "category": "HMAccessoryCategoryTypeLightbulb", "manufacturer": "Signify", "model": "LWA017",
+        "firmwareVersion": "1.93.7", "isReachable": true, "isBridged": true,
+        "services": [{"serviceId": "S-041", "name": "Light", "serviceType": "00000043-0000-1000-8000-0026BB765291", "isPrimary": true,
+          "characteristics": [
+            {"characteristicId": "C-042", "description": "Power State", "characteristicType": "00000025-0000-1000-8000-0026BB765291", "value": "1", "isReadable": true, "isWritable": true},
+            {"characteristicId": "C-043", "description": "Brightness", "characteristicType": "00000008-0000-1000-8000-0026BB765291", "value": "10", "isReadable": true, "isWritable": true}
+          ]}]
+      },
+      {
+        "accessoryId": "A-050", "name": "Vi'la Lamp", "roomId": "R-006", "roomName": "Vi'la's Room",
+        "category": "HMAccessoryCategoryTypeLightbulb", "manufacturer": "Signify", "model": "LCT015",
+        "firmwareVersion": "1.104.2", "isReachable": true, "isBridged": true,
+        "services": [{"serviceId": "S-050", "name": "Light", "serviceType": "00000043-0000-1000-8000-0026BB765291", "isPrimary": true,
+          "characteristics": [
+            {"characteristicId": "C-050", "description": "Power State", "characteristicType": "00000025-0000-1000-8000-0026BB765291", "value": "1", "isReadable": true, "isWritable": true},
+            {"characteristicId": "C-051", "description": "Brightness", "characteristicType": "00000008-0000-1000-8000-0026BB765291", "value": "40", "isReadable": true, "isWritable": true}
+          ]}]
+      },
+      {
+        "accessoryId": "A-051", "name": "Vi'la Stars", "roomId": "R-006", "roomName": "Vi'la's Room",
+        "category": "HMAccessoryCategoryTypeLightbulb", "manufacturer": "IKEA", "model": "TRADFRI",
+        "firmwareVersion": "2.3.0", "isReachable": true, "isBridged": true,
+        "services": [{"serviceId": "S-051", "name": "Light", "serviceType": "00000043-0000-1000-8000-0026BB765291", "isPrimary": true,
+          "characteristics": [
+            {"characteristicId": "C-052", "description": "Power State", "characteristicType": "00000025-0000-1000-8000-0026BB765291", "value": "1", "isReadable": true, "isWritable": true},
+            {"characteristicId": "C-053", "description": "Brightness", "characteristicType": "00000008-0000-1000-8000-0026BB765291", "value": "25", "isReadable": true, "isWritable": true}
+          ]}]
+      },
+      {
+        "accessoryId": "A-060", "name": "Garden Floods", "roomId": "R-007", "roomName": "Garden",
+        "category": "HMAccessoryCategoryTypeLightbulb", "manufacturer": "Signify", "model": "LCO002",
+        "firmwareVersion": "1.93.7", "isReachable": true, "isBridged": true,
+        "services": [{"serviceId": "S-060", "name": "Light", "serviceType": "00000043-0000-1000-8000-0026BB765291", "isPrimary": true,
+          "characteristics": [
+            {"characteristicId": "C-060", "description": "Power State", "characteristicType": "00000025-0000-1000-8000-0026BB765291", "value": "0", "isReadable": true, "isWritable": true},
+            {"characteristicId": "C-061", "description": "Brightness", "characteristicType": "00000008-0000-1000-8000-0026BB765291", "value": "100", "isReadable": true, "isWritable": true}
+          ]}]
+      },
+      {
+        "accessoryId": "A-061", "name": "Ring Garden Cam", "roomId": "R-007", "roomName": "Garden",
+        "category": "HMAccessoryCategoryTypeIPCamera", "manufacturer": "Ring", "model": "Spotlight Cam",
+        "firmwareVersion": "5.8", "isReachable": true, "isBridged": false,
+        "services": [{"serviceId": "S-061", "name": "Camera", "serviceType": "00000110-0000-1000-8000-0026BB765291", "isPrimary": true,
+          "characteristics": [
+            {"characteristicId": "C-062", "description": "Active", "characteristicType": "000000B0-0000-1000-8000-0026BB765291", "value": "1", "isReadable": true, "isWritable": false}
+          ]}]
+      }
+    ],
+    "scenes": [
+      { "sceneId": "SCN-001", "sceneName": "Movie Night", "actionCount": 6, "isExecuting": false },
+      { "sceneId": "SCN-002", "sceneName": "Bright", "actionCount": 8, "isExecuting": false },
+      { "sceneId": "SCN-003", "sceneName": "Kids Bedtime", "actionCount": 5, "isExecuting": false },
+      { "sceneId": "SCN-004", "sceneName": "Morning Routine", "actionCount": 7, "isExecuting": false },
+      { "sceneId": "SCN-005", "sceneName": "Away", "actionCount": 4, "isExecuting": false },
+      { "sceneId": "SCN-006", "sceneName": "Relax", "actionCount": 5, "isExecuting": false }
+    ],
+    "zones": [
+      { "zoneId": "Z-001", "zoneName": "Downstairs", "roomIds": ["R-001", "R-002", "R-004"] },
+      { "zoneId": "Z-002", "zoneName": "Upstairs", "roomIds": ["R-003", "R-005", "R-006"] },
+      { "zoneId": "Z-003", "zoneName": "Outside", "roomIds": ["R-007"] }
+    ]
+  }]
+}
