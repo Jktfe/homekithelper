@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { homeStore } from '$lib/stores/home.svelte';
 
-	let homeName = $derived(homeStore.home?.name ?? 'Home');
+	let homeName = $derived(homeStore.homeName);
 	let roomCount = $derived(homeStore.roomCount);
 	let deviceCount = $derived(homeStore.deviceCount);
 	let sceneCount = $derived(homeStore.sceneCount);

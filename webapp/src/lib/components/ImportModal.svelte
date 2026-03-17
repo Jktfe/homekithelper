@@ -28,7 +28,7 @@
 
 {#if homeStore.showImportModal}
 	<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
-	<div class="overlay" onclick={handleBackdropClick}>
+	<div class="overlay" role="dialog" aria-modal="true" tabindex="-1" onclick={handleBackdropClick} onkeydown={(e) => { if (e.key === 'Escape') handleClose(); }}>
 		<div class="modal">
 			<h2>Import HomeKit Export</h2>
 			<p class="subtitle">Paste your HomeKit Helper JSON export below</p>

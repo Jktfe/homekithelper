@@ -23,6 +23,7 @@
 	<div
 		class="handle-bar"
 		onclick={toggleDrawer}
+		onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') toggleDrawer(); }}
 		role="button"
 		tabindex="0"
 		aria-label="Toggle scene suggestions"

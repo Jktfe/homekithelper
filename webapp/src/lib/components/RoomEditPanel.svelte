@@ -64,9 +64,10 @@
 		<div class="panel-body">
 			<!-- Room Name -->
 			<div class="field-group">
-				<label class="field-label">Room Name</label>
+				<label class="field-label" for="room-name-input">Room Name</label>
 				<div class="name-row">
 					<input
+						id="room-name-input"
 						type="text"
 						class="name-input"
 						value={roomName}
@@ -83,7 +84,7 @@
 
 			<!-- Floor / Zone -->
 			<div class="field-group">
-				<label class="field-label">Floor / Zone</label>
+				<span class="field-label">Floor / Zone</span>
 				<div class="zone-options">
 					<button
 						class="zone-pill"
@@ -106,7 +107,7 @@
 
 			<!-- Accessories list -->
 			<div class="field-group">
-				<label class="field-label">Accessories ({accs.length})</label>
+				<span class="field-label">Accessories ({accs.length})</span>
 				<div class="acc-list">
 					{#each accs as acc}
 						<div class="acc-item">

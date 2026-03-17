@@ -85,6 +85,7 @@
 										class="toggle"
 										class:on={on}
 										onclick={() => togglePower(char.characteristicId)}
+										onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') togglePower(char.characteristicId); }}
 										role="switch"
 										aria-checked={!!on}
 										tabindex="0"

@@ -60,7 +60,7 @@
 	let dragOrigX = $state(0);
 	let dragOrigY = $state(0);
 
-	let designerEl: HTMLDivElement;
+	let designerEl = $state<HTMLDivElement>(undefined as unknown as HTMLDivElement);
 
 	function toRelative(clientX: number, clientY: number): { x: number; y: number } {
 		if (!designerEl) return { x: 0.5, y: 0.5 };
