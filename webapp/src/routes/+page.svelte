@@ -4,6 +4,7 @@
 	import BottomBar from '$lib/components/BottomBar.svelte';
 	import BuildingNav from '$lib/components/BuildingNav.svelte';
 	import DevicePanel from '$lib/components/DevicePanel.svelte';
+	import RoomEditPanel from '$lib/components/RoomEditPanel.svelte';
 	import IntentDrawer from '$lib/components/IntentDrawer.svelte';
 	import ImportModal from '$lib/components/ImportModal.svelte';
 	import UserSelector from '$lib/components/UserSelector.svelte';
@@ -21,6 +22,7 @@
 <TopBar />
 <BuildingNav />
 <DevicePanel />
+<RoomEditPanel />
 <IntentDrawer />
 <BottomBar />
 <ImportModal />

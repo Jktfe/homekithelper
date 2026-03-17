@@ -49,6 +49,9 @@ function createHomeStore() {
 	let exportData = $state<HomeExport>(sampleData as HomeExport);
 	let selectedRoomId = $state<string | null>(null);
 	let panelOpen = $state(false);
+	let editingRoomId = $state<string | null>(null);
+	let editPanelOpen = $state(false);
+	let designerRoomId = $state<string | null>(null);
 	const sampleRoomIds = (sampleData as HomeExport).homes[0]?.rooms?.map(r => r.roomId) ?? [];
 	let roomPositions = $state<Record<string, RoomPosition>>(loadPositions(sampleRoomIds));
 	let showImportModal = $state(false);
@@ -78,6 +81,17 @@ function createHomeStore() {
 				? (exportData.homes[0]?.accessories ?? []).filter(a => a.roomId === selectedRoomId)
 				: [];
 		},
+		get editingRoomId() { return editingRoomId; },
+		get editPanelOpen() { return editPanelOpen; },
+		get designerRoomId() { return designerRoomId; },
+		get editingRoom() {
+			return (exportData.homes[0]?.rooms ?? []).find(r => r.roomId === editingRoomId) ?? null;
+		},
+		get editingRoomAccessories() {
+			return editingRoomId
+				? (exportData.homes[0]?.accessories ?? []).filter(a => a.roomId === editingRoomId)
+				: [];
+		},
 
 		openRoom(roomId: string) {
 			selectedRoomId = roomId;
@@ -87,6 +101,53 @@ function createHomeStore() {
 		closePanel() {
 			panelOpen = false;
 			selectedRoomId = null;
+		},
+
+		editRoom(roomId: string) {
+			editingRoomId = roomId;
+			editPanelOpen = true;
+			// Close device panel if open
+			panelOpen = false;
+			selectedRoomId = null;
+		},
+
+		closeEditPanel() {
+			editPanelOpen = false;
+			editingRoomId = null;
+		},
+
+		openDesigner(roomId: string) {
+			designerRoomId = roomId;
+			editPanelOpen = false;
+		},
+
+		closeDesigner() {
+			designerRoomId = null;
+		},
+
+		updateRoomName(roomId: string, newName: string) {
+			const home = exportData.homes[0];
+			if (!home) return;
+			const room = home.rooms.find(r => r.roomId === roomId);
+			if (room) room.roomName = newName;
+			// Also update accessories that reference this room
+			home.accessories.forEach(a => {
+				if (a.roomId === roomId) a.roomName = newName;
+			});
+		},
+
+		setRoomZone(roomId: string, zoneId: string | null) {
+			const home = exportData.homes[0];
+			if (!home || !home.zones) return;
+			// Remove from all zones first
+			home.zones.forEach(z => {
+				z.roomIds = z.roomIds.filter(id => id !== roomId);
+			});
+			// Add to target zone
+			if (zoneId) {
+				const zone = home.zones.find(z => z.zoneId === zoneId);
+				if (zone) zone.roomIds.push(roomId);
+			}
 		},
 
 		updateRoomPosition(roomId: string, x: number, y: number) {

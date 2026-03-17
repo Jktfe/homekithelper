@@ -62,6 +62,28 @@
 		{room.roomName}
 	</text>
 
+	<!-- Edit button (pencil icon next to room name) -->
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<g
+		class="edit-btn"
+		style="cursor: pointer; pointer-events: auto;"
+		onclick={(e: MouseEvent) => { e.stopPropagation(); homeStore.editRoom(room.roomId); }}
+	>
+		<circle
+			cx={cx + (room.roomName.length * 3.5) + 14}
+			cy={cy - baseR - 18}
+			r="8"
+			style="fill: var(--card-bg); stroke: var(--card-border); stroke-width: 1;"
+		/>
+		<text
+			x={cx + (room.roomName.length * 3.5) + 14}
+			y={cy - baseR - 15}
+			text-anchor="middle"
+			font-size="8"
+			style="fill: var(--text-tertiary); pointer-events: none;"
+		>✎</text>
+	</g>
+
 	<!-- Device count -->
 	<text
 		x={cx}
