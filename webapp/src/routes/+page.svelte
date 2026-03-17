@@ -5,6 +5,7 @@
 	import BuildingNav from '$lib/components/BuildingNav.svelte';
 	import DevicePanel from '$lib/components/DevicePanel.svelte';
 	import RoomEditPanel from '$lib/components/RoomEditPanel.svelte';
+	import RoomDesigner from '$lib/components/RoomDesigner.svelte';
 	import IntentDrawer from '$lib/components/IntentDrawer.svelte';
 	import ImportModal from '$lib/components/ImportModal.svelte';
 	import UserSelector from '$lib/components/UserSelector.svelte';
@@ -36,3 +37,4 @@
 {/if}
 
 <SaveAutomationModal />
+<RoomDesigner />
