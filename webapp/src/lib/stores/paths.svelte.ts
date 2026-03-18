@@ -1,15 +1,15 @@
 import type { PathMode, UserPath } from '$lib/types/homekit';
 
 const familyMembers = [
-	{ userId: 'james', userName: 'James', color: '#89F7FE', initials: 'JK' },
-	{ userId: 'roxanne', userName: 'Roxanne', color: '#FFB347', initials: 'RK' },
-	{ userId: 'fletcher', userName: 'Fletcher', color: '#00E676', initials: 'FK' },
-	{ userId: 'viola', userName: 'Viola', color: '#FF6FD8', initials: 'VK' },
+	{ userId: 'person-a', userName: 'Alex', color: '#89F7FE', initials: 'AX' },
+	{ userId: 'person-b', userName: 'Sam', color: '#FFB347', initials: 'SM' },
+	{ userId: 'person-c', userName: 'Charlie', color: '#00E676', initials: 'CH' },
+	{ userId: 'person-d', userName: 'Robin', color: '#FF6FD8', initials: 'RB' },
 ];
 
 const samplePaths: Record<string, UserPath> = {
-	james: {
-		userId: 'james', userName: 'James', color: '#89F7FE',
+	'person-a': {
+		userId: 'person-a', userName: 'Alex', color: '#89F7FE',
 		waypoints: [
 			{ roomId: 'R-003', time: '06:30', action: 'Wake up' },
 			{ roomId: 'R-002', time: '06:45', action: 'Coffee' },
@@ -19,18 +19,18 @@ const samplePaths: Record<string, UserPath> = {
 			{ roomId: 'R-001', time: '18:00', action: 'Family time' },
 		],
 	},
-	roxanne: {
-		userId: 'roxanne', userName: 'Roxanne', color: '#FFB347',
+	'person-b': {
+		userId: 'person-b', userName: 'Sam', color: '#FFB347',
 		waypoints: [
 			{ roomId: 'R-003', time: '06:45', action: 'Wake up' },
-			{ roomId: 'R-005', time: '07:00', action: 'Wake Fletcher' },
-			{ roomId: 'R-006', time: '07:10', action: 'Wake Viola' },
+			{ roomId: 'R-005', time: '07:00', action: 'Wake kids' },
+			{ roomId: 'R-006', time: '07:10', action: 'Morning check' },
 			{ roomId: 'R-002', time: '07:30', action: 'Breakfast' },
 			{ roomId: 'R-001', time: '19:00', action: 'Evening' },
 		],
 	},
-	fletcher: {
-		userId: 'fletcher', userName: 'Fletcher', color: '#00E676',
+	'person-c': {
+		userId: 'person-c', userName: 'Charlie', color: '#00E676',
 		waypoints: [
 			{ roomId: 'R-005', time: '07:00', action: 'Wake up' },
 			{ roomId: 'R-002', time: '07:30', action: 'Breakfast' },
@@ -38,8 +38,8 @@ const samplePaths: Record<string, UserPath> = {
 			{ roomId: 'R-005', time: '20:00', action: 'Bedtime' },
 		],
 	},
-	viola: {
-		userId: 'viola', userName: 'Viola', color: '#FF6FD8',
+	'person-d': {
+		userId: 'person-d', userName: 'Robin', color: '#FF6FD8',
 		waypoints: [
 			{ roomId: 'R-006', time: '07:10', action: 'Wake up' },
 			{ roomId: 'R-002', time: '07:30', action: 'Breakfast' },

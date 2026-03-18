@@ -39,6 +39,10 @@ dist/
 # Claude
 .claude/plans/
 
+# Personal HomeKit exports (contain real device data)
+concept/Exports/
+/data/
+
 # Logs
 *.log
 npm-debug.log*

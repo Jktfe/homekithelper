@@ -145,9 +145,9 @@ function createChangeStore() {
 		get deleteScenes() { return deleteScenes; },
 
 		// Scene CRUD
-		recordNewScene(name: string, actions: import('$lib/types/changeset').SceneAction[]) {
+		recordNewScene(name: string, actions: import('$lib/types/changeset').SceneAction[], people?: string[]) {
 			if (newScenes.some(s => s.name === name)) return;
-			newScenes = [...newScenes, { name, actions }];
+			newScenes = [...newScenes, { name, actions, people: people?.length ? people : undefined }];
 		},
 
 		removeNewScene(name: string) {

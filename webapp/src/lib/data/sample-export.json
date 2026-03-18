@@ -3,14 +3,14 @@
   "appVersion": "0.1.0",
   "homes": [{
     "homeId": "57B698A8-83F9-5720-9FF3-3F87580182AC",
-    "homeName": "Manor Farm",
+    "homeName": "Sample Home",
     "rooms": [
       { "roomId": "R-001", "roomName": "Living Room", "accessoryCount": 4 },
       { "roomId": "R-002", "roomName": "Kitchen", "accessoryCount": 3 },
       { "roomId": "R-003", "roomName": "Master Bedroom", "accessoryCount": 3 },
       { "roomId": "R-004", "roomName": "Office", "accessoryCount": 3 },
-      { "roomId": "R-005", "roomName": "Fletcher's Room", "accessoryCount": 2 },
-      { "roomId": "R-006", "roomName": "Vi'la's Room", "accessoryCount": 2 },
+      { "roomId": "R-005", "roomName": "Kid's Room", "accessoryCount": 2 },
+      { "roomId": "R-006", "roomName": "Nursery", "accessoryCount": 2 },
       { "roomId": "R-007", "roomName": "Garden", "accessoryCount": 2 }
     ],
     "accessories": [
@@ -139,7 +139,7 @@
           ]}]
       },
       {
-        "accessoryId": "A-040", "name": "Fletcher Light", "roomId": "R-005", "roomName": "Fletcher's Room",
+        "accessoryId": "A-040", "name": "Kid's Light", "roomId": "R-005", "roomName": "Kid's Room",
         "category": "HMAccessoryCategoryTypeLightbulb", "manufacturer": "IKEA", "model": "TRADFRI",
         "firmwareVersion": "2.3.0", "isReachable": true, "isBridged": true,
         "services": [{"serviceId": "S-040", "name": "Light", "serviceType": "00000043-0000-1000-8000-0026BB765291", "isPrimary": true,
@@ -149,7 +149,7 @@
           ]}]
       },
       {
-        "accessoryId": "A-041", "name": "Fletcher Night Light", "roomId": "R-005", "roomName": "Fletcher's Room",
+        "accessoryId": "A-041", "name": "Kid's Night Light", "roomId": "R-005", "roomName": "Kid's Room",
         "category": "HMAccessoryCategoryTypeLightbulb", "manufacturer": "Signify", "model": "LWA017",
         "firmwareVersion": "1.93.7", "isReachable": true, "isBridged": true,
         "services": [{"serviceId": "S-041", "name": "Light", "serviceType": "00000043-0000-1000-8000-0026BB765291", "isPrimary": true,
@@ -159,7 +159,7 @@
           ]}]
       },
       {
-        "accessoryId": "A-050", "name": "Vi'la Lamp", "roomId": "R-006", "roomName": "Vi'la's Room",
+        "accessoryId": "A-050", "name": "Nursery Lamp", "roomId": "R-006", "roomName": "Nursery",
         "category": "HMAccessoryCategoryTypeLightbulb", "manufacturer": "Signify", "model": "LCT015",
         "firmwareVersion": "1.104.2", "isReachable": true, "isBridged": true,
         "services": [{"serviceId": "S-050", "name": "Light", "serviceType": "00000043-0000-1000-8000-0026BB765291", "isPrimary": true,
@@ -169,7 +169,7 @@
           ]}]
       },
       {
-        "accessoryId": "A-051", "name": "Vi'la Stars", "roomId": "R-006", "roomName": "Vi'la's Room",
+        "accessoryId": "A-051", "name": "Nursery Stars", "roomId": "R-006", "roomName": "Nursery",
         "category": "HMAccessoryCategoryTypeLightbulb", "manufacturer": "IKEA", "model": "TRADFRI",
         "firmwareVersion": "2.3.0", "isReachable": true, "isBridged": true,
         "services": [{"serviceId": "S-051", "name": "Light", "serviceType": "00000043-0000-1000-8000-0026BB765291", "isPrimary": true,

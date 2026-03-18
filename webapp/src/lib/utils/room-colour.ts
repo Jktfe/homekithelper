@@ -5,8 +5,8 @@ import { SERVICE_TYPES } from '$lib/types/homekit';
 export function getRoomGlow(room: RoomData, accessories: AccessoryData[]): RoomGlow {
 	const accs = accessories.filter(a => a.roomId === room.roomId);
 
-	// Vi'la's / Violas room gets special pink
-	if (/vi.?la/i.test(room.roomName)) return { color: '#FF6FD8', cls: 'pink' };
+	// Child's room gets special pink
+	if (/kid|child|nursery/i.test(room.roomName)) return { color: '#FF6FD8', cls: 'pink' };
 
 	// Check for active motion sensors via serviceType UUID
 	const hasMotion = accs.some(a =>

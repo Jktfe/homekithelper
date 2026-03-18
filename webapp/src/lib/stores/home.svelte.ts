@@ -284,7 +284,7 @@ function createHomeStore() {
 			changeStore.recordDeleteZone(zoneId);
 		},
 
-		createScene(name: string, actions: import('$lib/types/changeset').SceneAction[]) {
+		createScene(name: string, actions: import('$lib/types/changeset').SceneAction[], people?: string[]) {
 			const home = exportData?.homes[0];
 			if (!home) return;
 			if (!home.scenes) home.scenes = [];
@@ -294,8 +294,10 @@ function createHomeStore() {
 				sceneName: name,
 				actionCount: actions.length,
 				isExecuting: false,
+				actions,
+				people: people?.length ? people : undefined,
 			}];
-			changeStore.recordNewScene(name, actions);
+			changeStore.recordNewScene(name, actions, people);
 		},
 
 		deleteScene(sceneId: string) {
@@ -354,6 +356,21 @@ function createHomeStore() {
 			changeStore.init(home.homeId ?? '', home.accessories);
 			panelOpen = false;
 			selectedRoomId = null;
+		},
+
+		scenesForRoom(roomId: string) {
+			const home = exportData?.homes[0];
+			if (!home) return [];
+			const roomAccIds = new Set(
+				(home.accessories ?? []).filter(a => a.roomId === roomId).map(a => a.accessoryId)
+			);
+			return (home.scenes ?? []).filter(s =>
+				s.actions?.some(a => roomAccIds.has(a.accessoryId))
+			);
+		},
+
+		zonesForRoom(roomId: string) {
+			return (exportData?.homes[0]?.zones ?? []).filter(z => z.roomIds.includes(roomId));
 		},
 
 		accessoriesForRoom(roomId: string): AccessoryData[] {

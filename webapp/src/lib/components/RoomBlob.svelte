@@ -107,6 +107,7 @@
 			{dotIndex}
 			totalDots={accs.length}
 			roomRadius={baseR}
+			roomId={room.roomId}
 			glowColor={glow.color}
 			{enterDelay}
 		/>

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { AccessoryData } from '$lib/types/homekit';
 	import { siriScore, siriColor } from '$lib/utils/siri-score';
+	import { layoutStore, GRID_COLS, GRID_ROWS } from '$lib/stores/layouts.svelte';
 
 	let {
 		accessory,
@@ -9,6 +10,7 @@
 		dotIndex,
 		totalDots,
 		roomRadius,
+		roomId,
 		glowColor,
 		enterDelay,
 	}: {
@@ -18,15 +20,15 @@
 		dotIndex: number;
 		totalDots: number;
 		roomRadius: number;
+		roomId: string;
 		glowColor: string;
 		enterDelay: number;
 	} = $props();
 
-	// Orbital position
-	let angle = $derived((2 * Math.PI / Math.max(totalDots, 1)) * dotIndex - Math.PI / 2);
-	let dotR = $derived(roomRadius * 0.5 * (0.4 + (totalDots > 2 ? 0.6 : 0.3)));
-	let dx = $derived(cx + Math.cos(angle) * dotR);
-	let dy = $derived(cy + Math.sin(angle) * dotR + 8);
+	// Map grid position into blob circle coordinates
+	let gridPos = $derived(layoutStore.getPos(roomId, accessory.accessoryId, dotIndex));
+	let dx = $derived(cx + ((gridPos.col + 0.5) / GRID_COLS - 0.5) * roomRadius * 1.6);
+	let dy = $derived(cy + ((gridPos.row + 0.5) / GRID_ROWS - 0.5) * roomRadius * 1.6);
 
 	// Check if device is on
 	let isOn = $derived(

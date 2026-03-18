@@ -30,6 +30,7 @@ export interface DeleteRoomEntry {
 export interface NewSceneEntry {
 	name: string;
 	actions: SceneAction[];
+	people?: string[];
 }
 
 export interface DeleteSceneEntry {

@@ -55,6 +55,8 @@ export interface SceneData {
 	sceneName: string;
 	actionCount: number;
 	isExecuting: boolean;
+	actions?: import('$lib/types/changeset').SceneAction[];
+	people?: string[];
 }
 
 export type ZoneType = 'building' | 'floor' | 'zone';
