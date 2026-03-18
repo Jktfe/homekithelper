@@ -9,6 +9,7 @@ export interface SceneAction {
 
 export interface RenameEntry {
 	accessoryId: string;
+	currentName: string;
 	newName: string;
 }
 
@@ -19,7 +20,7 @@ export interface RoomAssignmentEntry {
 }
 
 export interface NewRoomEntry {
-	name: string;
+	roomName: string;
 	zone?: string;
 }
 
@@ -28,7 +29,7 @@ export interface DeleteRoomEntry {
 }
 
 export interface NewSceneEntry {
-	name: string;
+	sceneName: string;
 	actions: SceneAction[];
 	people?: string[];
 }
@@ -39,15 +40,22 @@ export interface DeleteSceneEntry {
 
 export interface UpdateSceneEntry {
 	sceneId: string;
+	newSceneName?: string;
 	actions: SceneAction[];
 }
 
 export interface NewZoneEntry {
-	name: string;
+	zoneName: string;
 }
 
 export interface DeleteZoneEntry {
 	zoneId: string;
+}
+
+export interface ZoneRoomAssignment {
+	zoneName: string;
+	roomId: string;
+	action: 'add' | 'remove';
 }
 
 export interface ChangeSet {
@@ -61,4 +69,5 @@ export interface ChangeSet {
 	updateScenes?: UpdateSceneEntry[];
 	newZones?: NewZoneEntry[];
 	deleteZones?: DeleteZoneEntry[];
+	zoneRoomAssignments?: ZoneRoomAssignment[];
 }

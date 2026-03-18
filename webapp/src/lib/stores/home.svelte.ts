@@ -182,12 +182,18 @@ function createHomeStore() {
 			if (zoneType === 'building' || zoneType === 'floor') {
 				home.zones.forEach(z => {
 					if ((z.zoneType ?? 'zone') === zoneType) {
-						z.roomIds = z.roomIds.filter(id => id !== roomId);
+						if (z.roomIds.includes(roomId)) {
+							z.roomIds = z.roomIds.filter(id => id !== roomId);
+							changeStore.recordZoneRoomAssignment(z.zoneName, roomId, 'remove');
+						}
 					}
 				});
 				if (zoneId) {
 					const zone = home.zones.find(z => z.zoneId === zoneId);
-					if (zone) zone.roomIds.push(roomId);
+					if (zone) {
+						zone.roomIds.push(roomId);
+						changeStore.recordZoneRoomAssignment(zone.zoneName, roomId, 'add');
+					}
 				}
 			} else {
 				// Toggle: add if not present, remove if already present
@@ -196,8 +202,10 @@ function createHomeStore() {
 					if (zone) {
 						if (zone.roomIds.includes(roomId)) {
 							zone.roomIds = zone.roomIds.filter(id => id !== roomId);
+							changeStore.recordZoneRoomAssignment(zone.zoneName, roomId, 'remove');
 						} else {
 							zone.roomIds.push(roomId);
+							changeStore.recordZoneRoomAssignment(zone.zoneName, roomId, 'add');
 						}
 					}
 				}
@@ -275,6 +283,17 @@ function createHomeStore() {
 				roomIds: [],
 			}];
 			changeStore.recordNewZone(name);
+		},
+
+		setZoneType(zoneId: string, newType: ZoneType) {
+			const home = exportData?.homes[0];
+			if (!home || !home.zones) return;
+			const zone = home.zones.find(z => z.zoneId === zoneId);
+			if (zone) {
+				zone.zoneType = newType;
+				// Trigger reactivity
+				home.zones = [...home.zones];
+			}
 		},
 
 		deleteZone(zoneId: string) {

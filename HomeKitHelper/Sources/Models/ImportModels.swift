@@ -14,6 +14,7 @@ struct HomeImport: Codable {
     let newZones: [NewZone]
     let deleteZones: [DeleteZone]
     let updateScenes: [UpdateScene]
+    let zoneRoomAssignments: [ZoneRoomAssignment]
 
     // All arrays default to empty for backwards compatibility
     init(from decoder: Decoder) throws {
@@ -28,6 +29,7 @@ struct HomeImport: Codable {
         newZones = try container.decodeIfPresent([NewZone].self, forKey: .newZones) ?? []
         deleteZones = try container.decodeIfPresent([DeleteZone].self, forKey: .deleteZones) ?? []
         updateScenes = try container.decodeIfPresent([UpdateScene].self, forKey: .updateScenes) ?? []
+        zoneRoomAssignments = try container.decodeIfPresent([ZoneRoomAssignment].self, forKey: .zoneRoomAssignments) ?? []
     }
 }
 
@@ -74,6 +76,12 @@ struct NewZone: Codable {
 
 struct DeleteZone: Codable {
     let zoneId: String
+}
+
+struct ZoneRoomAssignment: Codable {
+    let zoneName: String
+    let roomId: String
+    let action: String // "add" or "remove"
 }
 
 struct UpdateScene: Codable {

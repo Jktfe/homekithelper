@@ -17,6 +17,10 @@
 	let newFloorName = $state('');
 	let newZoneName = $state('');
 
+	// Drag-and-drop state
+	let dragZoneId = $state<string | null>(null);
+	let dropTarget = $state<ZoneType | null>(null);
+
 	let buildingSlabs = $derived(
 		homeStore.buildings.map((z, i) => ({
 			name: z.zoneName,
@@ -75,129 +79,215 @@
 		newZoneName = '';
 		showNewZone = false;
 	}
+
+	function handleDragStart(e: DragEvent, zoneId: string) {
+		dragZoneId = zoneId;
+		if (e.dataTransfer) {
+			e.dataTransfer.effectAllowed = 'move';
+			e.dataTransfer.setData('text/plain', zoneId);
+		}
+	}
+
+	function handleDragOver(e: DragEvent, type: ZoneType) {
+		e.preventDefault();
+		if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
+		dropTarget = type;
+	}
+
+	function handleDragLeave() {
+		dropTarget = null;
+	}
+
+	function handleDrop(e: DragEvent, type: ZoneType) {
+		e.preventDefault();
+		dropTarget = null;
+		if (dragZoneId) {
+			homeStore.setZoneType(dragZoneId, type);
+			dragZoneId = null;
+		}
+	}
+
+	function handleDragEnd() {
+		dragZoneId = null;
+		dropTarget = null;
+	}
 </script>
 
 <nav class="building-nav">
 	<!-- Buildings -->
-	<h2 class="heading">BUILDINGS</h2>
-	{#each buildingSlabs as bldg}
-		<div class="zone-row">
-			<button class="zone-slab-wrap" onclick={() => {}}>
-				<FloorSlab
-					name={bldg.name}
-					selected={false}
-					color={bldg.color}
-					roomCount={bldg.roomCount}
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
+	<div
+		class="drop-section"
+		class:drop-active={dropTarget === 'building'}
+		ondragover={(e) => handleDragOver(e, 'building')}
+		ondragleave={handleDragLeave}
+		ondrop={(e) => handleDrop(e, 'building')}
+	>
+		<h2 class="heading">BUILDINGS</h2>
+		{#each buildingSlabs as bldg}
+			<div
+				class="zone-row"
+				draggable="true"
+				ondragstart={(e) => handleDragStart(e, bldg.zoneId)}
+				ondragend={handleDragEnd}
+				class:dragging={dragZoneId === bldg.zoneId}
+			>
+				<button class="zone-slab-wrap" onclick={() => {}}>
+					<FloorSlab
+						name={bldg.name}
+						selected={false}
+						color={bldg.color}
+						roomCount={bldg.roomCount}
+					/>
+				</button>
+				<button
+					class="zone-delete"
+					title="Delete building"
+					onclick={() => homeStore.deleteZone(bldg.zoneId)}
+				>&times;</button>
+			</div>
+		{/each}
+		{#if buildingSlabs.length === 0 && dropTarget !== 'building'}
+			<p class="empty-hint">No buildings yet</p>
+		{/if}
+		{#if dropTarget === 'building'}
+			<div class="drop-hint">Drop here to make building</div>
+		{/if}
+		{#if showNewBuilding}
+			<div class="inline-form">
+				<!-- svelte-ignore a11y_autofocus -- focus follows explicit user click -->
+				<input
+					type="text"
+					class="inline-input"
+					placeholder="Building name"
+					bind:value={newBuildingName}
+					onkeydown={(e) => { if (e.key === 'Enter') addBuilding(); if (e.key === 'Escape') showNewBuilding = false; }}
+					autofocus
 				/>
-			</button>
-			<button
-				class="zone-delete"
-				title="Delete building"
-				onclick={() => homeStore.deleteZone(bldg.zoneId)}
-			>&times;</button>
-		</div>
-	{/each}
-	{#if buildingSlabs.length === 0}
-		<p class="empty-hint">No buildings yet</p>
-	{/if}
-	{#if showNewBuilding}
-		<div class="inline-form">
-			<!-- svelte-ignore a11y_autofocus -- focus follows explicit user click -->
-			<input
-				type="text"
-				class="inline-input"
-				placeholder="Building name"
-				bind:value={newBuildingName}
-				onkeydown={(e) => { if (e.key === 'Enter') addBuilding(); if (e.key === 'Escape') showNewBuilding = false; }}
-				autofocus
-			/>
-			<button class="inline-ok" onclick={addBuilding}>+</button>
-		</div>
-	{:else}
-		<button class="add-btn" onclick={() => (showNewBuilding = true)}>+ Building</button>
-	{/if}
+				<button class="inline-ok" onclick={addBuilding}>+</button>
+			</div>
+		{:else}
+			<button class="add-btn" onclick={() => (showNewBuilding = true)}>+ Building</button>
+		{/if}
+	</div>
 
 	<div class="divider"></div>
 
 	<!-- Floors -->
-	<h2 class="heading">FLOORS</h2>
-	{#each floorSlabs as fl}
-		<div class="zone-row">
-			<button class="zone-slab-wrap" onclick={() => {}}>
-				<FloorSlab
-					name={fl.name}
-					selected={false}
-					color={fl.color}
-					roomCount={fl.roomCount}
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
+	<div
+		class="drop-section"
+		class:drop-active={dropTarget === 'floor'}
+		ondragover={(e) => handleDragOver(e, 'floor')}
+		ondragleave={handleDragLeave}
+		ondrop={(e) => handleDrop(e, 'floor')}
+	>
+		<h2 class="heading">FLOORS</h2>
+		{#each floorSlabs as fl}
+			<div
+				class="zone-row"
+				draggable="true"
+				ondragstart={(e) => handleDragStart(e, fl.zoneId)}
+				ondragend={handleDragEnd}
+				class:dragging={dragZoneId === fl.zoneId}
+			>
+				<button class="zone-slab-wrap" onclick={() => {}}>
+					<FloorSlab
+						name={fl.name}
+						selected={false}
+						color={fl.color}
+						roomCount={fl.roomCount}
+					/>
+				</button>
+				<button
+					class="zone-delete"
+					title="Delete floor"
+					onclick={() => homeStore.deleteZone(fl.zoneId)}
+				>&times;</button>
+			</div>
+		{/each}
+		{#if floorSlabs.length === 0 && dropTarget !== 'floor'}
+			<p class="empty-hint">No floors yet</p>
+		{/if}
+		{#if dropTarget === 'floor'}
+			<div class="drop-hint">Drop here to make floor</div>
+		{/if}
+		{#if showNewFloor}
+			<div class="inline-form">
+				<!-- svelte-ignore a11y_autofocus -- focus follows explicit user click -->
+				<input
+					type="text"
+					class="inline-input"
+					placeholder="Floor name"
+					bind:value={newFloorName}
+					onkeydown={(e) => { if (e.key === 'Enter') addFloor(); if (e.key === 'Escape') showNewFloor = false; }}
+					autofocus
 				/>
-			</button>
-			<button
-				class="zone-delete"
-				title="Delete floor"
-				onclick={() => homeStore.deleteZone(fl.zoneId)}
-			>&times;</button>
-		</div>
-	{/each}
-	{#if floorSlabs.length === 0}
-		<p class="empty-hint">No floors yet</p>
-	{/if}
-	{#if showNewFloor}
-		<div class="inline-form">
-			<!-- svelte-ignore a11y_autofocus -- focus follows explicit user click -->
-			<input
-				type="text"
-				class="inline-input"
-				placeholder="Floor name"
-				bind:value={newFloorName}
-				onkeydown={(e) => { if (e.key === 'Enter') addFloor(); if (e.key === 'Escape') showNewFloor = false; }}
-				autofocus
-			/>
-			<button class="inline-ok" onclick={addFloor}>+</button>
-		</div>
-	{:else}
-		<button class="add-btn" onclick={() => (showNewFloor = true)}>+ Floor</button>
-	{/if}
+				<button class="inline-ok" onclick={addFloor}>+</button>
+			</div>
+		{:else}
+			<button class="add-btn" onclick={() => (showNewFloor = true)}>+ Floor</button>
+		{/if}
+	</div>
 
 	<div class="divider"></div>
 
 	<!-- Zones -->
-	<h2 class="heading">ZONES</h2>
-	{#each zoneSlabs as zone, i}
-		<div class="zone-row">
-			<button class="zone-slab-wrap" onclick={() => (selectedIndex = i)}>
-				<FloorSlab
-					name={zone.name}
-					selected={selectedIndex === i}
-					color={zone.color}
-					roomCount={zone.roomCount}
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
+	<div
+		class="drop-section"
+		class:drop-active={dropTarget === 'zone'}
+		ondragover={(e) => handleDragOver(e, 'zone')}
+		ondragleave={handleDragLeave}
+		ondrop={(e) => handleDrop(e, 'zone')}
+	>
+		<h2 class="heading">ZONES</h2>
+		{#each zoneSlabs as zone, i}
+			<div
+				class="zone-row"
+				draggable="true"
+				ondragstart={(e) => handleDragStart(e, zone.zoneId)}
+				ondragend={handleDragEnd}
+				class:dragging={dragZoneId === zone.zoneId}
+			>
+				<button class="zone-slab-wrap" onclick={() => (selectedIndex = i)}>
+					<FloorSlab
+						name={zone.name}
+						selected={selectedIndex === i}
+						color={zone.color}
+						roomCount={zone.roomCount}
+					/>
+				</button>
+				<button
+					class="zone-delete"
+					title="Delete zone"
+					onclick={() => homeStore.deleteZone(zone.zoneId)}
+				>&times;</button>
+			</div>
+		{/each}
+		{#if zoneSlabs.length === 0 && dropTarget !== 'zone'}
+			<p class="empty-hint">No zones yet</p>
+		{/if}
+		{#if dropTarget === 'zone'}
+			<div class="drop-hint">Drop here to make zone</div>
+		{/if}
+		{#if showNewZone}
+			<div class="inline-form">
+				<!-- svelte-ignore a11y_autofocus -- focus follows explicit user click on "+ Zone" button -->
+				<input
+					type="text"
+					class="inline-input"
+					placeholder="Zone name"
+					bind:value={newZoneName}
+					onkeydown={(e) => { if (e.key === 'Enter') addZone(); if (e.key === 'Escape') showNewZone = false; }}
+					autofocus
 				/>
-			</button>
-			<button
-				class="zone-delete"
-				title="Delete zone"
-				onclick={() => homeStore.deleteZone(zone.zoneId)}
-			>&times;</button>
-		</div>
-	{/each}
-	{#if zoneSlabs.length === 0}
-		<p class="empty-hint">No zones yet</p>
-	{/if}
-	{#if showNewZone}
-		<div class="inline-form">
-			<!-- svelte-ignore a11y_autofocus -- focus follows explicit user click on "+ Zone" button -->
-			<input
-				type="text"
-				class="inline-input"
-				placeholder="Zone name"
-				bind:value={newZoneName}
-				onkeydown={(e) => { if (e.key === 'Enter') addZone(); if (e.key === 'Escape') showNewZone = false; }}
-				autofocus
-			/>
-			<button class="inline-ok" onclick={addZone}>+</button>
-		</div>
-	{:else}
-		<button class="add-btn" onclick={() => (showNewZone = true)}>+ Zone</button>
-	{/if}
+				<button class="inline-ok" onclick={addZone}>+</button>
+			</div>
+		{:else}
+			<button class="add-btn" onclick={() => (showNewZone = true)}>+ Zone</button>
+		{/if}
+	</div>
 
 	<div class="divider"></div>
 
@@ -247,10 +337,43 @@
 		font-weight: 400;
 	}
 
+	.drop-section {
+		border-radius: 10px;
+		padding: 2px;
+		border: 2px solid transparent;
+		transition: border-color 0.2s, background 0.2s;
+	}
+
+	.drop-section.drop-active {
+		border-color: var(--solar-amber);
+		background: color-mix(in srgb, var(--solar-amber), transparent 92%);
+	}
+
+	.drop-hint {
+		font-family: 'JetBrains Mono', monospace;
+		font-size: 9px;
+		color: var(--solar-amber);
+		text-align: center;
+		padding: 6px;
+		border: 1px dashed var(--solar-amber);
+		border-radius: 8px;
+		margin: 4px 0;
+	}
+
 	.zone-row {
 		display: flex;
 		align-items: center;
 		gap: 4px;
+		cursor: grab;
+		transition: opacity 0.2s;
+	}
+
+	.zone-row:active {
+		cursor: grabbing;
+	}
+
+	.zone-row.dragging {
+		opacity: 0.3;
 	}
 
 	.zone-slab-wrap {

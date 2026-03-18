@@ -122,6 +122,19 @@
           "zoneId": { "type": "string", "description": "UUID of the zone to delete" }
         }
       }
+    },
+    "zoneRoomAssignments": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "type": "object",
+        "required": ["zoneName", "roomId", "action"],
+        "properties": {
+          "zoneName": { "type": "string", "description": "Name of the target zone" },
+          "roomId": { "type": "string", "description": "UUID of the room to add/remove" },
+          "action": { "type": "string", "enum": ["add", "remove"], "description": "Whether to add or remove the room from the zone" }
+        }
+      }
     }
   },
   "$defs": {

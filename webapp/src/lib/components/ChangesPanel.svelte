@@ -19,7 +19,25 @@
 		URL.revokeObjectURL(url);
 	}
 
+	function saveLocal() {
+		changeStore.saveToLocal();
+		saved = true;
+		setTimeout(() => (saved = false), 2000);
+	}
+
+	function loadLocal() {
+		const ok = changeStore.loadFromLocal();
+		if (!ok) {
+			loadMsg = 'No saved changes';
+		} else {
+			loadMsg = 'Restored!';
+		}
+		setTimeout(() => (loadMsg = ''), 2000);
+	}
+
 	let copied = $state(false);
+	let saved = $state(false);
+	let loadMsg = $state('');
 </script>
 
 <div class="changes-panel" class:open={changeStore.showPanel}>
@@ -74,15 +92,15 @@
 			{#if changeStore.newRooms.length > 0}
 				<div class="section">
 					<h3 class="section-title">New Rooms ({changeStore.newRooms.length})</h3>
-					{#each changeStore.newRooms as entry (entry.name)}
+					{#each changeStore.newRooms as entry (entry.roomName)}
 						<div class="change-card">
 							<div class="change-detail">
-								<span class="change-add">+ {entry.name}</span>
+								<span class="change-add">+ {entry.roomName}</span>
 								{#if entry.zone}
 									<span class="change-meta">({entry.zone})</span>
 								{/if}
 							</div>
-							<button class="undo-btn" onclick={() => changeStore.removeNewRoom(entry.name)}>Undo</button>
+							<button class="undo-btn" onclick={() => changeStore.removeNewRoom(entry.roomName)}>Undo</button>
 						</div>
 					{/each}
 				</div>
@@ -105,12 +123,12 @@
 			{#if changeStore.newZones.length > 0}
 				<div class="section">
 					<h3 class="section-title">New Zones ({changeStore.newZones.length})</h3>
-					{#each changeStore.newZones as entry (entry.name)}
+					{#each changeStore.newZones as entry (entry.zoneName)}
 						<div class="change-card">
 							<div class="change-detail">
-								<span class="change-add">+ {entry.name}</span>
+								<span class="change-add">+ {entry.zoneName}</span>
 							</div>
-							<button class="undo-btn" onclick={() => changeStore.removeNewZone(entry.name)}>Undo</button>
+							<button class="undo-btn" onclick={() => changeStore.removeNewZone(entry.zoneName)}>Undo</button>
 						</div>
 					{/each}
 				</div>
@@ -130,16 +148,36 @@
 				</div>
 			{/if}
 
+			{#if changeStore.zoneRoomAssignments.length > 0}
+				<div class="section">
+					<h3 class="section-title">Zone Assignments ({changeStore.zoneRoomAssignments.length})</h3>
+					{#each changeStore.zoneRoomAssignments as entry, i (entry.zoneName + entry.roomId)}
+						<div class="change-card">
+							<div class="change-detail">
+								{#if entry.action === 'add'}
+									<span class="change-add">+ {entry.roomId.slice(0, 8)}...</span>
+								{:else}
+									<span class="change-remove">- {entry.roomId.slice(0, 8)}...</span>
+								{/if}
+								<span class="change-arrow">&rarr;</span>
+								<span class="change-after">{entry.zoneName}</span>
+							</div>
+							<button class="undo-btn" onclick={() => changeStore.removeZoneRoomAssignment(entry.zoneName, entry.roomId)}>Undo</button>
+						</div>
+					{/each}
+				</div>
+			{/if}
+
 			{#if changeStore.newScenes.length > 0}
 				<div class="section">
 					<h3 class="section-title">New Scenes ({changeStore.newScenes.length})</h3>
-					{#each changeStore.newScenes as entry (entry.name)}
+					{#each changeStore.newScenes as entry (entry.sceneName)}
 						<div class="change-card">
 							<div class="change-detail">
-								<span class="change-add">+ {entry.name}</span>
+								<span class="change-add">+ {entry.sceneName}</span>
 								<span class="change-meta">({entry.actions.length} action{entry.actions.length !== 1 ? 's' : ''})</span>
 							</div>
-							<button class="undo-btn" onclick={() => changeStore.removeNewScene(entry.name)}>Undo</button>
+							<button class="undo-btn" onclick={() => changeStore.removeNewScene(entry.sceneName)}>Undo</button>
 						</div>
 					{/each}
 				</div>
@@ -161,15 +199,18 @@
 		{/if}
 	</div>
 
-	{#if !changeStore.isEmpty}
-		<div class="panel-footer">
-			<button class="btn-ghost" onclick={() => changeStore.clear()}>Clear All</button>
+	<div class="panel-footer">
+		{#if !changeStore.isEmpty}
+			<button class="btn-ghost" onclick={() => { changeStore.clear(); changeStore.clearLocal(); }}>Clear All</button>
+			<button class="btn-ghost" onclick={saveLocal}>{saved ? 'Saved!' : 'Save'}</button>
 			<button class="btn-ghost" onclick={downloadJSON}>Download</button>
 			<button class="btn-primary" onclick={copyToClipboard}>
 				{copied ? 'Copied!' : 'Copy'}
 			</button>
-		</div>
-	{/if}
+		{:else}
+			<button class="btn-ghost" onclick={loadLocal}>{loadMsg || 'Load Saved'}</button>
+		{/if}
+	</div>
 </div>
 
 <style>

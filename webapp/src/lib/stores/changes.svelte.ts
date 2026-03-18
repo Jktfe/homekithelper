@@ -1,3 +1,4 @@
+import { browser } from '$app/environment';
 import type {
 	ChangeSet,
 	RenameEntry,
@@ -8,8 +9,11 @@ import type {
 	DeleteSceneEntry,
 	UpdateSceneEntry,
 	NewZoneEntry,
-	DeleteZoneEntry
+	DeleteZoneEntry,
+	ZoneRoomAssignment
 } from '$lib/types/changeset';
+
+const STORAGE_KEY = 'homekit-helper-changes';
 
 function createChangeStore() {
 	let homeId = $state('');
@@ -24,6 +28,7 @@ function createChangeStore() {
 	let updateScenes = $state<UpdateSceneEntry[]>([]);
 	let newZones = $state<NewZoneEntry[]>([]);
 	let deleteZones = $state<DeleteZoneEntry[]>([]);
+	let zoneRoomAssignments = $state<ZoneRoomAssignment[]>([]);
 
 	let showPanel = $state(false);
 
@@ -36,7 +41,8 @@ function createChangeStore() {
 		deleteScenes.length +
 		updateScenes.length +
 		newZones.length +
-		deleteZones.length
+		deleteZones.length +
+		zoneRoomAssignments.length
 	);
 
 	const isEmpty = $derived(pendingCount === 0);
@@ -69,6 +75,7 @@ function createChangeStore() {
 			updateScenes = [];
 			newZones = [];
 			deleteZones = [];
+			zoneRoomAssignments = [];
 		},
 
 		recordRename(accessoryId: string, newName: string) {
@@ -78,7 +85,7 @@ function createChangeStore() {
 				renames = new Map(renames);
 				return;
 			}
-			renames.set(accessoryId, { accessoryId, newName });
+			renames.set(accessoryId, { accessoryId, currentName: original ?? '', newName });
 			renames = new Map(renames);
 		},
 
@@ -103,12 +110,12 @@ function createChangeStore() {
 
 		// Room CRUD
 		recordNewRoom(name: string, zone?: string) {
-			if (newRooms.some(r => r.name === name)) return;
-			newRooms = [...newRooms, { name, zone }];
+			if (newRooms.some(r => r.roomName === name)) return;
+			newRooms = [...newRooms, { roomName: name, zone }];
 		},
 
 		removeNewRoom(name: string) {
-			newRooms = newRooms.filter(r => r.name !== name);
+			newRooms = newRooms.filter(r => r.roomName !== name);
 		},
 
 		recordDeleteRoom(roomId: string) {
@@ -122,12 +129,12 @@ function createChangeStore() {
 
 		// Zone CRUD
 		recordNewZone(name: string) {
-			if (newZones.some(z => z.name === name)) return;
-			newZones = [...newZones, { name }];
+			if (newZones.some(z => z.zoneName === name)) return;
+			newZones = [...newZones, { zoneName: name }];
 		},
 
 		removeNewZone(name: string) {
-			newZones = newZones.filter(z => z.name !== name);
+			newZones = newZones.filter(z => z.zoneName !== name);
 		},
 
 		recordDeleteZone(zoneId: string) {
@@ -139,19 +146,34 @@ function createChangeStore() {
 			deleteZones = deleteZones.filter(z => z.zoneId !== zoneId);
 		},
 
+		recordZoneRoomAssignment(zoneName: string, roomId: string, action: 'add' | 'remove') {
+			// Remove any existing assignment for this zone+room pair
+			zoneRoomAssignments = zoneRoomAssignments.filter(
+				a => !(a.zoneName === zoneName && a.roomId === roomId)
+			);
+			zoneRoomAssignments = [...zoneRoomAssignments, { zoneName, roomId, action }];
+		},
+
+		removeZoneRoomAssignment(zoneName: string, roomId: string) {
+			zoneRoomAssignments = zoneRoomAssignments.filter(
+				a => !(a.zoneName === zoneName && a.roomId === roomId)
+			);
+		},
+
 		get newZones() { return newZones; },
 		get deleteZones() { return deleteZones; },
+		get zoneRoomAssignments() { return zoneRoomAssignments; },
 		get newScenes() { return newScenes; },
 		get deleteScenes() { return deleteScenes; },
 
 		// Scene CRUD
 		recordNewScene(name: string, actions: import('$lib/types/changeset').SceneAction[], people?: string[]) {
-			if (newScenes.some(s => s.name === name)) return;
-			newScenes = [...newScenes, { name, actions, people: people?.length ? people : undefined }];
+			if (newScenes.some(s => s.sceneName === name)) return;
+			newScenes = [...newScenes, { sceneName: name, actions, people: people?.length ? people : undefined }];
 		},
 
 		removeNewScene(name: string) {
-			newScenes = newScenes.filter(s => s.name !== name);
+			newScenes = newScenes.filter(s => s.sceneName !== name);
 		},
 
 		recordDeleteScene(sceneId: string) {
@@ -175,8 +197,57 @@ function createChangeStore() {
 			if (updateScenes.length > 0) result.updateScenes = updateScenes;
 			if (newZones.length > 0) result.newZones = newZones;
 			if (deleteZones.length > 0) result.deleteZones = deleteZones;
+			if (zoneRoomAssignments.length > 0) result.zoneRoomAssignments = zoneRoomAssignments;
 
 			return result;
+		},
+
+		saveToLocal() {
+			if (!browser) return;
+			const data = {
+				homeId,
+				originalNames: Object.fromEntries(originalNames),
+				renames: Object.fromEntries(renames),
+				roomAssignments: Object.fromEntries(roomAssignments),
+				newRooms,
+				deleteRooms,
+				newScenes,
+				deleteScenes,
+				updateScenes,
+				newZones,
+				deleteZones,
+				zoneRoomAssignments
+			};
+			localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+		},
+
+		loadFromLocal(): boolean {
+			if (!browser) return false;
+			const raw = localStorage.getItem(STORAGE_KEY);
+			if (!raw) return false;
+			try {
+				const data = JSON.parse(raw);
+				homeId = data.homeId ?? '';
+				originalNames = new Map(Object.entries(data.originalNames ?? {}));
+				renames = new Map(Object.entries(data.renames ?? {}) as [string, RenameEntry][]);
+				roomAssignments = new Map(Object.entries(data.roomAssignments ?? {}) as [string, RoomAssignmentEntry][]);
+				newRooms = data.newRooms ?? [];
+				deleteRooms = data.deleteRooms ?? [];
+				newScenes = data.newScenes ?? [];
+				deleteScenes = data.deleteScenes ?? [];
+				updateScenes = data.updateScenes ?? [];
+				newZones = data.newZones ?? [];
+				deleteZones = data.deleteZones ?? [];
+				zoneRoomAssignments = data.zoneRoomAssignments ?? [];
+				return true;
+			} catch {
+				return false;
+			}
+		},
+
+		clearLocal() {
+			if (!browser) return;
+			localStorage.removeItem(STORAGE_KEY);
 		}
 	};
 }

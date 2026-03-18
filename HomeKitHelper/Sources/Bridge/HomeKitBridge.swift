@@ -168,6 +168,11 @@ final class HomeKitBridge: NSObject, HMHomeManagerDelegate {
             await createRoom(newRoom, in: home)
         }
 
+        // 2.5. Zone-room assignments (add/remove rooms from zones)
+        for assignment in importData.zoneRoomAssignments {
+            await assignRoomToZone(assignment, in: home)
+        }
+
         // 3. Rename accessories
         for rename in importData.renames {
             await renameAccessory(rename, in: home)
@@ -464,6 +469,42 @@ final class HomeKitBridge: NSObject, HMHomeManagerDelegate {
             appendLog(.success, "Created zone '\(newZone.zoneName)'")
         } catch {
             appendLog(.failure, "Create zone '\(newZone.zoneName)': \(error.localizedDescription)")
+        }
+    }
+
+    private func assignRoomToZone(_ assignment: ZoneRoomAssignment, in home: HMHome) async {
+        guard let zone = home.zones.first(where: { $0.name == assignment.zoneName }) else {
+            appendLog(.skipped, "Zone '\(assignment.zoneName)' not found for room assignment")
+            return
+        }
+
+        guard let room = home.rooms.first(where: {
+            $0.uniqueIdentifier.uuidString == assignment.roomId
+        }) else {
+            appendLog(.skipped, "Room not found: \(assignment.roomId)")
+            return
+        }
+
+        do {
+            if assignment.action == "add" {
+                try await withCheckedThrowingContinuation { (cont: CheckedContinuation<Void, Error>) in
+                    zone.addRoom(room) { error in
+                        if let error { cont.resume(throwing: error) }
+                        else { cont.resume() }
+                    }
+                }
+                appendLog(.success, "Added '\(room.name)' to zone '\(assignment.zoneName)'")
+            } else {
+                try await withCheckedThrowingContinuation { (cont: CheckedContinuation<Void, Error>) in
+                    zone.removeRoom(room) { error in
+                        if let error { cont.resume(throwing: error) }
+                        else { cont.resume() }
+                    }
+                }
+                appendLog(.success, "Removed '\(room.name)' from zone '\(assignment.zoneName)'")
+            }
+        } catch {
+            appendLog(.failure, "\(assignment.action) '\(room.name)' \(assignment.action == "add" ? "to" : "from") zone '\(assignment.zoneName)': \(error.localizedDescription)")
         }
     }
 
