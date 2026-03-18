@@ -1,4 +1,4 @@
-import type { HomeExport, RoomData, AccessoryData, RoomPosition } from '$lib/types/homekit';
+import type { HomeExport, RoomData, AccessoryData, RoomPosition, ZoneType } from '$lib/types/homekit';
 import sampleData from '$lib/data/sample-export.json';
 import { browser } from '$app/environment';
 import { changeStore } from '$lib/stores/changes.svelte';
@@ -65,6 +65,7 @@ function createHomeStore() {
 	let showImportModal = $state(false);
 	let showBulkRename = $state(false);
 	let showScenePanel = $state(false);
+	let filterBuildingIds = $state<Set<string>>(new Set());
 
 	return {
 		get exportData() { return exportData; },
@@ -74,6 +75,30 @@ function createHomeStore() {
 		get accessories() { return exportData?.homes[0]?.accessories ?? []; },
 		get scenes() { return exportData?.homes[0]?.scenes ?? []; },
 		get zones() { return exportData?.homes[0]?.zones ?? []; },
+		get buildings() { return (exportData?.homes[0]?.zones ?? []).filter(z => z.zoneType === 'building'); },
+		get floors() { return (exportData?.homes[0]?.zones ?? []).filter(z => z.zoneType === 'floor'); },
+		get generalZones() { return (exportData?.homes[0]?.zones ?? []).filter(z => (z.zoneType ?? 'zone') === 'zone'); },
+		get filterBuildingIds() { return filterBuildingIds; },
+		toggleBuildingFilter(zoneId: string) {
+			const next = new Set(filterBuildingIds);
+			if (next.has(zoneId)) next.delete(zoneId);
+			else next.add(zoneId);
+			filterBuildingIds = next;
+		},
+		clearBuildingFilter() {
+			filterBuildingIds = new Set();
+		},
+		get filteredRoomIds(): Set<string> | null {
+			if (filterBuildingIds.size === 0) return null; // no filter = show all
+			const zones = exportData?.homes[0]?.zones ?? [];
+			const ids = new Set<string>();
+			for (const z of zones) {
+				if (filterBuildingIds.has(z.zoneId)) {
+					z.roomIds.forEach(id => ids.add(id));
+				}
+			}
+			return ids;
+		},
 		get roomCount() { return exportData?.homes[0]?.rooms?.length ?? 0; },
 		get deviceCount() { return exportData?.homes[0]?.accessories?.length ?? 0; },
 		get sceneCount() { return exportData?.homes[0]?.scenes?.length ?? 0; },
@@ -149,15 +174,33 @@ function createHomeStore() {
 			});
 		},
 
-		setRoomZone(roomId: string, zoneId: string | null) {
+		setRoomZone(roomId: string, zoneId: string | null, zoneType: ZoneType = 'zone') {
 			const home = exportData?.homes[0];
 			if (!home || !home.zones) return;
-			home.zones.forEach(z => {
-				z.roomIds = z.roomIds.filter(id => id !== roomId);
-			});
-			if (zoneId) {
-				const zone = home.zones.find(z => z.zoneId === zoneId);
-				if (zone) zone.roomIds.push(roomId);
+			// Building & floor: single-select — remove from all of same type
+			// Zone: multi-select — only toggle the specific zone
+			if (zoneType === 'building' || zoneType === 'floor') {
+				home.zones.forEach(z => {
+					if ((z.zoneType ?? 'zone') === zoneType) {
+						z.roomIds = z.roomIds.filter(id => id !== roomId);
+					}
+				});
+				if (zoneId) {
+					const zone = home.zones.find(z => z.zoneId === zoneId);
+					if (zone) zone.roomIds.push(roomId);
+				}
+			} else {
+				// Toggle: add if not present, remove if already present
+				if (zoneId) {
+					const zone = home.zones.find(z => z.zoneId === zoneId);
+					if (zone) {
+						if (zone.roomIds.includes(roomId)) {
+							zone.roomIds = zone.roomIds.filter(id => id !== roomId);
+						} else {
+							zone.roomIds.push(roomId);
+						}
+					}
+				}
 			}
 		},
 
@@ -220,7 +263,7 @@ function createHomeStore() {
 			}
 		},
 
-		createZone(name: string) {
+		createZone(name: string, zoneType: ZoneType = 'zone') {
 			const home = exportData?.homes[0];
 			if (!home) return;
 			if (!home.zones) home.zones = [];
@@ -228,6 +271,7 @@ function createHomeStore() {
 			home.zones = [...home.zones, {
 				zoneId,
 				zoneName: name,
+				zoneType,
 				roomIds: [],
 			}];
 			changeStore.recordNewZone(name);

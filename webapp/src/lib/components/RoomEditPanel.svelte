@@ -2,8 +2,12 @@
 	import { homeStore } from '$lib/stores/home.svelte';
 	import { siriScore, siriClass, siriLabel } from '$lib/utils/siri-score';
 
+	import type { ZoneType } from '$lib/types/homekit';
+
 	let roomName = $state('');
-	let selectedZoneId = $state<string | null>(null);
+	let selectedBuildingId = $state<string | null>(null);
+	let selectedFloorId = $state<string | null>(null);
+	let selectedZoneIds = $state<Set<string>>(new Set());
 	let nameEdited = $state(false);
 
 	// Sync with currently editing room
@@ -12,9 +16,16 @@
 		if (room) {
 			roomName = room.roomName;
 			nameEdited = false;
-			// Find which zone this room is in
-			const zone = homeStore.zones.find(z => z.roomIds.includes(room.roomId));
-			selectedZoneId = zone?.zoneId ?? null;
+			// Find which zone of each type this room is in
+			const building = homeStore.buildings.find(z => z.roomIds.includes(room.roomId));
+			selectedBuildingId = building?.zoneId ?? null;
+			const floor = homeStore.floors.find(z => z.roomIds.includes(room.roomId));
+			selectedFloorId = floor?.zoneId ?? null;
+			// Zones: can be in multiple
+			const zoneIds = homeStore.generalZones
+				.filter(z => z.roomIds.includes(room.roomId))
+				.map(z => z.zoneId);
+			selectedZoneIds = new Set(zoneIds);
 		}
 	});
 
@@ -30,10 +41,18 @@
 		}
 	}
 
-	function handleZoneChange(zoneId: string | null) {
-		selectedZoneId = zoneId;
+	function handleZoneChange(zoneId: string | null, zoneType: ZoneType) {
+		if (zoneType === 'building') selectedBuildingId = zoneId;
+		else if (zoneType === 'floor') selectedFloorId = zoneId;
+		else if (zoneType === 'zone' && zoneId) {
+			// Toggle: add or remove from set
+			const next = new Set(selectedZoneIds);
+			if (next.has(zoneId)) next.delete(zoneId);
+			else next.add(zoneId);
+			selectedZoneIds = next;
+		}
 		if (homeStore.editingRoomId) {
-			homeStore.setRoomZone(homeStore.editingRoomId, zoneId);
+			homeStore.setRoomZone(homeStore.editingRoomId, zoneId, zoneType);
 		}
 	}
 
@@ -82,26 +101,68 @@
 				{/if}
 			</div>
 
-			<!-- Floor / Zone -->
+			<!-- Building -->
 			<div class="field-group">
-				<span class="field-label">Floor / Zone</span>
+				<span class="field-label">Building</span>
 				<div class="zone-options">
 					<button
 						class="zone-pill"
-						class:active={selectedZoneId === null}
-						onclick={() => handleZoneChange(null)}
+						class:active={selectedBuildingId === null}
+						onclick={() => handleZoneChange(null, 'building')}
 					>
 						Unassigned
 					</button>
-					{#each homeStore.zones as zone}
+					{#each homeStore.buildings as bldg}
 						<button
 							class="zone-pill"
-							class:active={selectedZoneId === zone.zoneId}
-							onclick={() => handleZoneChange(zone.zoneId)}
+							class:active={selectedBuildingId === bldg.zoneId}
+							onclick={() => handleZoneChange(bldg.zoneId, 'building')}
+						>
+							{bldg.zoneName}
+						</button>
+					{/each}
+				</div>
+			</div>
+
+			<!-- Floor -->
+			<div class="field-group">
+				<span class="field-label">Floor</span>
+				<div class="zone-options">
+					<button
+						class="zone-pill"
+						class:active={selectedFloorId === null}
+						onclick={() => handleZoneChange(null, 'floor')}
+					>
+						Unassigned
+					</button>
+					{#each homeStore.floors as fl}
+						<button
+							class="zone-pill"
+							class:active={selectedFloorId === fl.zoneId}
+							onclick={() => handleZoneChange(fl.zoneId, 'floor')}
+						>
+							{fl.zoneName}
+						</button>
+					{/each}
+				</div>
+			</div>
+
+			<!-- Zone (multi-select) -->
+			<div class="field-group">
+				<span class="field-label">Zone <span class="field-hint">(select multiple)</span></span>
+				<div class="zone-options">
+					{#each homeStore.generalZones as zone}
+						<button
+							class="zone-pill"
+							class:active={selectedZoneIds.has(zone.zoneId)}
+							onclick={() => handleZoneChange(zone.zoneId, 'zone')}
 						>
 							{zone.zoneName}
 						</button>
 					{/each}
+					{#if homeStore.generalZones.length === 0}
+						<span class="empty-pill-hint">No zones — add from sidebar</span>
+					{/if}
 				</div>
 			</div>
 
@@ -304,6 +365,18 @@
 		border-color: var(--solar-amber);
 		background: color-mix(in srgb, var(--solar-amber), transparent 88%);
 		color: var(--solar-amber);
+	}
+
+	.field-hint {
+		font-weight: 400;
+		opacity: 0.5;
+		font-size: 8px;
+	}
+
+	.empty-pill-hint {
+		font-family: 'JetBrains Mono', monospace;
+		font-size: 9px;
+		color: var(--text-muted);
 	}
 
 	.acc-list {

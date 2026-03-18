@@ -207,9 +207,9 @@
       { "sceneId": "SCN-006", "sceneName": "Relax", "actionCount": 5, "isExecuting": false }
     ],
     "zones": [
-      { "zoneId": "Z-001", "zoneName": "Downstairs", "roomIds": ["R-001", "R-002", "R-004"] },
-      { "zoneId": "Z-002", "zoneName": "Upstairs", "roomIds": ["R-003", "R-005", "R-006"] },
-      { "zoneId": "Z-003", "zoneName": "Outside", "roomIds": ["R-007"] }
+      { "zoneId": "Z-001", "zoneName": "Downstairs", "zoneType": "floor", "roomIds": ["R-001", "R-002", "R-004"] },
+      { "zoneId": "Z-002", "zoneName": "Upstairs", "zoneType": "floor", "roomIds": ["R-003", "R-005", "R-006"] },
+      { "zoneId": "Z-003", "zoneName": "Outside", "zoneType": "zone", "roomIds": ["R-007"] }
     ]
   }]
 }

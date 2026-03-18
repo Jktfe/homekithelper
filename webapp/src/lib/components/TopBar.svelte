@@ -4,8 +4,7 @@
 	import { themeStore } from '$lib/stores/theme.svelte';
 	import { changeStore } from '$lib/stores/changes.svelte';
 
-	const buildings = ['Building 1', 'Building 2', 'Outdoors'];
-	let selectedBuilding = $state(0);
+	let buildings = $derived(homeStore.buildings);
 
 	let now = $state(new Date());
 
@@ -32,15 +31,24 @@
 	</div>
 
 	<div class="centre">
-		{#each buildings as bld, i}
+		{#if buildings.length > 0}
 			<button
 				class="glass-btn"
-				class:active={selectedBuilding === i}
-				onclick={() => (selectedBuilding = i)}
+				class:active={homeStore.filterBuildingIds.size === 0}
+				onclick={() => homeStore.clearBuildingFilter()}
 			>
-				{bld}
+				All
 			</button>
-		{/each}
+			{#each buildings as bldg}
+				<button
+					class="glass-btn"
+					class:active={homeStore.filterBuildingIds.has(bldg.zoneId)}
+					onclick={() => homeStore.toggleBuildingFilter(bldg.zoneId)}
+				>
+					{bldg.zoneName}
+				</button>
+			{/each}
+		{/if}
 	</div>
 
 	<div class="right">

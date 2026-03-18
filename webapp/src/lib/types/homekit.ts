@@ -57,9 +57,12 @@ export interface SceneData {
 	isExecuting: boolean;
 }
 
+export type ZoneType = 'building' | 'floor' | 'zone';
+
 export interface ZoneData {
 	zoneId: string;
 	zoneName: string;
+	zoneType: ZoneType;
 	roomIds: string[];
 }
 

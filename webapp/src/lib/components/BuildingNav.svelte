@@ -1,24 +1,47 @@
 <script lang="ts">
 	import { homeStore } from '$lib/stores/home.svelte';
+	import type { ZoneType } from '$lib/types/homekit';
 	import FloorSlab from './FloorSlab.svelte';
 
-	const zoneColors = ['#FFB347', '#89F7FE', '#00E676', '#FF6FD8'];
+	const buildingColors = ['#FF6FD8', '#C47AFF', '#FF8A65', '#AB47BC'];
+	const floorColors = ['#89F7FE', '#4FC3F7', '#80DEEA', '#B2EBF2'];
+	const zoneColors = ['#FFB347', '#00E676', '#FFEE58', '#A5D6A7'];
 
 	let selectedIndex = $state(0);
 	let showNewRoom = $state(false);
+	let showNewBuilding = $state(false);
+	let showNewFloor = $state(false);
 	let showNewZone = $state(false);
 	let newRoomName = $state('');
+	let newBuildingName = $state('');
+	let newFloorName = $state('');
 	let newZoneName = $state('');
 
-	let floors = $derived(
-		homeStore.zones.length > 0
-			? homeStore.zones.map((z, i) => ({
-					name: z.zoneName,
-					color: zoneColors[i % zoneColors.length],
-					roomCount: z.roomIds.length,
-					zoneId: z.zoneId,
-				}))
-			: []
+	let buildingSlabs = $derived(
+		homeStore.buildings.map((z, i) => ({
+			name: z.zoneName,
+			color: buildingColors[i % buildingColors.length],
+			roomCount: z.roomIds.length,
+			zoneId: z.zoneId,
+		}))
+	);
+
+	let floorSlabs = $derived(
+		homeStore.floors.map((z, i) => ({
+			name: z.zoneName,
+			color: floorColors[i % floorColors.length],
+			roomCount: z.roomIds.length,
+			zoneId: z.zoneId,
+		}))
+	);
+
+	let zoneSlabs = $derived(
+		homeStore.generalZones.map((z, i) => ({
+			name: z.zoneName,
+			color: zoneColors[i % zoneColors.length],
+			roomCount: z.roomIds.length,
+			zoneId: z.zoneId,
+		}))
 	);
 
 	function addRoom() {
@@ -29,40 +52,136 @@
 		showNewRoom = false;
 	}
 
+	function addTypedZone(name: string, type: ZoneType) {
+		const trimmed = name.trim();
+		if (!trimmed) return;
+		homeStore.createZone(trimmed, type);
+	}
+
+	function addBuilding() {
+		addTypedZone(newBuildingName, 'building');
+		newBuildingName = '';
+		showNewBuilding = false;
+	}
+
+	function addFloor() {
+		addTypedZone(newFloorName, 'floor');
+		newFloorName = '';
+		showNewFloor = false;
+	}
+
 	function addZone() {
-		const name = newZoneName.trim();
-		if (!name) return;
-		homeStore.createZone(name);
+		addTypedZone(newZoneName, 'zone');
 		newZoneName = '';
 		showNewZone = false;
 	}
 </script>
 
 <nav class="building-nav">
+	<!-- Buildings -->
+	<h2 class="heading">BUILDINGS</h2>
+	{#each buildingSlabs as bldg}
+		<div class="zone-row">
+			<button class="zone-slab-wrap" onclick={() => {}}>
+				<FloorSlab
+					name={bldg.name}
+					selected={false}
+					color={bldg.color}
+					roomCount={bldg.roomCount}
+				/>
+			</button>
+			<button
+				class="zone-delete"
+				title="Delete building"
+				onclick={() => homeStore.deleteZone(bldg.zoneId)}
+			>&times;</button>
+		</div>
+	{/each}
+	{#if buildingSlabs.length === 0}
+		<p class="empty-hint">No buildings yet</p>
+	{/if}
+	{#if showNewBuilding}
+		<div class="inline-form">
+			<!-- svelte-ignore a11y_autofocus -- focus follows explicit user click -->
+			<input
+				type="text"
+				class="inline-input"
+				placeholder="Building name"
+				bind:value={newBuildingName}
+				onkeydown={(e) => { if (e.key === 'Enter') addBuilding(); if (e.key === 'Escape') showNewBuilding = false; }}
+				autofocus
+			/>
+			<button class="inline-ok" onclick={addBuilding}>+</button>
+		</div>
+	{:else}
+		<button class="add-btn" onclick={() => (showNewBuilding = true)}>+ Building</button>
+	{/if}
+
+	<div class="divider"></div>
+
+	<!-- Floors -->
+	<h2 class="heading">FLOORS</h2>
+	{#each floorSlabs as fl}
+		<div class="zone-row">
+			<button class="zone-slab-wrap" onclick={() => {}}>
+				<FloorSlab
+					name={fl.name}
+					selected={false}
+					color={fl.color}
+					roomCount={fl.roomCount}
+				/>
+			</button>
+			<button
+				class="zone-delete"
+				title="Delete floor"
+				onclick={() => homeStore.deleteZone(fl.zoneId)}
+			>&times;</button>
+		</div>
+	{/each}
+	{#if floorSlabs.length === 0}
+		<p class="empty-hint">No floors yet</p>
+	{/if}
+	{#if showNewFloor}
+		<div class="inline-form">
+			<!-- svelte-ignore a11y_autofocus -- focus follows explicit user click -->
+			<input
+				type="text"
+				class="inline-input"
+				placeholder="Floor name"
+				bind:value={newFloorName}
+				onkeydown={(e) => { if (e.key === 'Enter') addFloor(); if (e.key === 'Escape') showNewFloor = false; }}
+				autofocus
+			/>
+			<button class="inline-ok" onclick={addFloor}>+</button>
+		</div>
+	{:else}
+		<button class="add-btn" onclick={() => (showNewFloor = true)}>+ Floor</button>
+	{/if}
+
+	<div class="divider"></div>
+
+	<!-- Zones -->
 	<h2 class="heading">ZONES</h2>
-	{#each floors as floor, i}
+	{#each zoneSlabs as zone, i}
 		<div class="zone-row">
 			<button class="zone-slab-wrap" onclick={() => (selectedIndex = i)}>
 				<FloorSlab
-					name={floor.name}
+					name={zone.name}
 					selected={selectedIndex === i}
-					color={floor.color}
-					roomCount={floor.roomCount}
+					color={zone.color}
+					roomCount={zone.roomCount}
 				/>
 			</button>
 			<button
 				class="zone-delete"
 				title="Delete zone"
-				onclick={() => homeStore.deleteZone(floor.zoneId)}
+				onclick={() => homeStore.deleteZone(zone.zoneId)}
 			>&times;</button>
 		</div>
 	{/each}
-
-	{#if floors.length === 0}
+	{#if zoneSlabs.length === 0}
 		<p class="empty-hint">No zones yet</p>
 	{/if}
-
-	<!-- Add Zone -->
 	{#if showNewZone}
 		<div class="inline-form">
 			<!-- svelte-ignore a11y_autofocus -- focus follows explicit user click on "+ Zone" button -->
@@ -82,10 +201,9 @@
 
 	<div class="divider"></div>
 
+	<!-- Rooms -->
 	<h2 class="heading">ROOMS</h2>
 	<p class="room-count">{homeStore.roomCount} rooms</p>
-
-	<!-- Add Room -->
 	{#if showNewRoom}
 		<div class="inline-form">
 			<!-- svelte-ignore a11y_autofocus -- focus follows explicit user click on "+ Room" button -->

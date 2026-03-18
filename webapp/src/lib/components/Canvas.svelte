@@ -204,6 +204,8 @@
 		{@const glow = getRoomGlow(room, homeStore.accessories)}
 		{@const accs = homeStore.accessoriesForRoom(room.roomId)}
 		{@const baseR = roomRadius(accs.length)}
+		{@const filtered = homeStore.filteredRoomIds}
+		{@const dimmed = filtered !== null && !filtered.has(room.roomId)}
 		{#if pos}
 			<circle
 				cx={pos.x}
@@ -212,7 +214,7 @@
 				fill={glow.color}
 				opacity="0"
 				filter="url(#atmosphere-blur)"
-				style="animation: atmosphere-in 1.5s ease {2.0 + i * 0.08}s forwards;"
+				style="animation: atmosphere-in 1.5s ease {2.0 + i * 0.08}s forwards; {dimmed ? 'opacity: 0.08;' : ''}"
 			/>
 		{/if}
 	{/each}
@@ -220,8 +222,12 @@
 	<!-- Room blobs -->
 	{#each homeStore.rooms as room, i}
 		{@const pos = homeStore.roomPositions[room.roomId]}
+		{@const filtered = homeStore.filteredRoomIds}
+		{@const dimmed = filtered !== null && !filtered.has(room.roomId)}
 		{#if pos}
-			<RoomBlob {room} cx={pos.x} cy={pos.y} index={i} />
+			<g style="opacity: {dimmed ? 0.15 : 1}; transition: opacity 0.4s ease; {dimmed ? 'pointer-events: none;' : ''}">
+				<RoomBlob {room} cx={pos.x} cy={pos.y} index={i} />
+			</g>
 		{/if}
 	{/each}
 
